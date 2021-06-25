@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Drownsiness</string>
+    <string name="facebook_app_id">151925050299319</string>
+    <string name="fb_login_protocol_scheme">fb151925050299319</string>
+
+</resources>
