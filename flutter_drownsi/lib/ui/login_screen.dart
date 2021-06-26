@@ -5,12 +5,9 @@ import 'package:flutter_drownsi/home_ui/drownsiness_app/drownsiness_app_controll
 import 'package:flutter_drownsi/home_ui/drownsiness_app/models/UserPostData.dart';
 import 'package:flutter_drownsi/home_ui/drownsiness_app/models/UserResponseData.dart';
 import 'package:flutter_drownsi/home_ui/drownsiness_app/util/UserRepo.dart';
-import 'package:flutter_drownsi/ui/home_screen.dart';
 import 'package:flutter_drownsi/ui/otp_screen.dart';
-import 'package:flutter_drownsi/ui/splash_login_screen.dart';
 import 'package:flutter_drownsi/ui/turnOnDevice_screen.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 
 class LoginPage extends StatefulWidget {
   @override
