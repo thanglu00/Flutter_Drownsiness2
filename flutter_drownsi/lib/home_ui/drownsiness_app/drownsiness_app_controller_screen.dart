@@ -10,7 +10,6 @@ import 'home_view/my_home_screen.dart';
 class DrownsinessAppHomeScreen extends StatefulWidget {
   final UserResponse userResponse;
   const DrownsinessAppHomeScreen({Key? key, required this.userResponse}) : super(key: key);
-
   @override
   _DrownsinessAppHomeScreenState createState() => _DrownsinessAppHomeScreenState();
 }
@@ -34,7 +33,7 @@ class _DrownsinessAppHomeScreenState extends State<DrownsinessAppHomeScreen>
 
     animationController = AnimationController(
         duration: const Duration(milliseconds: 600), vsync: this);
-    tabBody = MyDiaryScreen(animationController: animationController);
+    tabBody = MyHomeScreen(animationController: animationController);
     super.initState();
   }
 
@@ -96,7 +95,7 @@ class _DrownsinessAppHomeScreenState extends State<DrownsinessAppHomeScreen>
                 }
                 setState(() {
                   tabBody =
-                      MyDiaryScreen(animationController: animationController);
+                      MyHomeScreen(animationController: animationController,userResponse: widget.userResponse,);
                 });
               });
             } else if (index == 3) {

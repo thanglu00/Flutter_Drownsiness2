@@ -5,11 +5,12 @@ import 'package:http/http.dart' as http;
 
 class DataTrackingRepo{
 
-  Future<List<DrownsinessDataTracking>> getDataTracking(String userID, String deviceID) async {
-    final String baseUrl = "https://dhdev-drowsiness123.herokuapp.com/api/v1/data-trackings/users/$userID/devices/$deviceID";
+  Future<List<DrownsinessDataTracking>> getDataTracking(String userID, String token) async {
+    final String baseUrl = "https://dhdev-drowsiness123.herokuapp.com/api/v1/data-trackings";
     final result = await http.get(Uri.parse(baseUrl), headers: {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
+      'Authorization': 'Bearer $token',
     });
     if(result.statusCode != 200){
       throw new Exception('Error getting tracking list');

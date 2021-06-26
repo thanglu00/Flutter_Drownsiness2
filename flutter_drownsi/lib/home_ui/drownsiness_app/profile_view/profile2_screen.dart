@@ -357,7 +357,7 @@ class MapScreenState extends State<ProfilePage>
                     textColor: Colors.white,
                     color: Colors.green,
                     onPressed: () {
-                      var result = UserRepo().updateUser(widget.userResponse.userId,widget.userResponse.token, ProfileDataUpdate(true, _data!.getavatar, _data!.getemail, nameController.text, _data!.getpassword, _data!.getusername));
+                      var result = UserRepo().updateUser(widget.userResponse.userId,widget.userResponse.token, ProfileDataUpdate(true, _data!.getavatar, _data!.getemail, nameController.text, _data!.getemail, _data!.getusername));
                       setState(() {
                         _status = true;
                         FocusScope.of(context).requestFocus(new FocusNode());

@@ -1,19 +1,20 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_drownsi/home_ui/drownsiness_app/models/UserResponseData.dart';
 import 'package:flutter_drownsi/home_ui/drownsiness_app/ui_view/tracking_list_view.dart';
 
 import 'package:flutter_drownsi/home_ui/drownsiness_app/ui_view/title_view.dart';
 import 'package:flutter_drownsi/home_ui/drownsiness_app/drownsiness_app_theme.dart';
 import 'package:flutter/material.dart';
 
-class MyDiaryScreen extends StatefulWidget {
-  const MyDiaryScreen({Key? key, required this.animationController}) : super(key: key);
-
+class MyHomeScreen extends StatefulWidget {
+  const MyHomeScreen({Key? key, required this.animationController, this.userResponse}) : super(key: key);
   final AnimationController animationController;
+  final UserResponse? userResponse;
   @override
-  _MyDiaryScreenState createState() => _MyDiaryScreenState();
+  _MyHomeScreenState createState() => _MyHomeScreenState();
 }
 
-class _MyDiaryScreenState extends State<MyDiaryScreen>
+class _MyHomeScreenState extends State<MyHomeScreen>
     with TickerProviderStateMixin {
   late Animation<double> topBarAnimation;
   String? user = FirebaseAuth.instance.currentUser!.displayName;
@@ -77,6 +78,7 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
             curve:
                 Interval((1 / count) * 5, 1.0, curve: Curves.fastOutSlowIn))),
         animationController: widget.animationController,
+        userResponse1: widget.userResponse,
       ),
     );
   }

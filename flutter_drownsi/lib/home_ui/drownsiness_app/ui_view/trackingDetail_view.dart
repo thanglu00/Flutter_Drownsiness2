@@ -1,6 +1,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_drownsi/home_ui/drownsiness_app/models/DrownsinessData.dart';
 import 'package:flutter_drownsi/home_ui/drownsiness_app/models/historyDrownsiness_data.dart';
 
 import '../../../main.dart';
@@ -9,6 +10,8 @@ import '../../../main.dart';
 class TrackingDetail extends StatelessWidget{
   DrownsinessData? data;
   List<DrownsinessData> listData = DrownsinessData.trackingList;
+  DrownsinessDataTracking dataTracking;
+  TrackingDetail(this.dataTracking);
   @override
   Widget build(BuildContext context) {
         return Scaffold(
@@ -28,20 +31,21 @@ class TrackingDetail extends StatelessWidget{
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                         children: <Widget>[
-                          Image.asset(listData[0].imagePath, width: 200, height: 200,),
+                          Image(image:NetworkImage(dataTracking.imageUrl), width: 200, height: 200,),
                           SizedBox(
                             height: 40,
                           ),
-                          Text("Name : "+ listData[0].userName, style: TextStyle(fontSize: 18),),
+                          Text("Tracking ID : ", style: TextStyle(fontSize: 18),),
+                          Text(dataTracking.getTrackingID, style: TextStyle(fontSize: 18),),
                           SizedBox(
                             height: 10,
                           ),
-                          Text("At date : " + listData[0].dateTime!.day.toString() + "/" + listData[0].dateTime!.month.toString() + "/" + listData[0].dateTime!.year.toString(),
+                          Text("At date : " + dataTracking.getTrackingDay,
                             style: TextStyle(fontSize: 18),),
                           SizedBox(
                             height: 10,
                           ),
-                          Text("You was drownsiness at "+listData[0].dateTime!.hour.toString() +":"+ listData[0].dateTime!.minute.toString(),
+                          Text("You was drownsiness at "+dataTracking.getTrackingTime,
                             style: TextStyle(fontSize: 18),),
                           SizedBox(
                             height: 10,

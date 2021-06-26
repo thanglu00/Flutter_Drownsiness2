@@ -2,15 +2,17 @@ import 'package:flutter_drownsi/home_ui/drownsiness_app/drownsiness_app_theme.da
 import 'package:flutter/material.dart';
 import 'package:flutter_drownsi/home_ui/drownsiness_app/models/DataTrackingDate.dart';
 import 'package:flutter_drownsi/home_ui/drownsiness_app/models/DrownsinessData.dart';
+import 'package:flutter_drownsi/home_ui/drownsiness_app/models/UserResponseData.dart';
 import 'package:flutter_drownsi/home_ui/drownsiness_app/ui_view/trackingDetail_view.dart';
 import 'package:collection/collection.dart';
+import 'package:flutter_drownsi/home_ui/drownsiness_app/util/DataTrackingRepo.dart';
 
-import '../../../main.dart';
 
 class ListDrownsiness extends StatefulWidget {
   final AnimationController animationController;
   final Animation<double> animation;
-  const ListDrownsiness({Key? key, required this.animationController, required this.animation})
+  final UserResponse? userResponse1;
+  const ListDrownsiness({Key? key, required this.animationController, required this.animation, this.userResponse1})
       : super(key: key);
 
   @override
@@ -210,62 +212,64 @@ class MyListDrownsiness extends State<ListDrownsiness> {
     return true;
   }
   List<Widget> listViews = <Widget>[];
-  List<DrownsinessDataTracking>? listData;
-  List<DataTrackingDay>? datatmp;
-  Map<String, List<DataTrackingDay>>? _map;
+  List<DrownsinessDataTracking> listData = <DrownsinessDataTracking>[];
+  List<DataTrackingDay> datatmp = <DataTrackingDay>[];
+  Map<String, List<DrownsinessDataTracking>>? _map;
   void addAllListDataDay(){
     listViews.clear();
-    datatmp!.clear();
-    datatmp!.add(new DataTrackingDay(
-        "11111",
-        "21:00",
-        "21/6/2021",
-        "6/2021",
-        "2021",
-        "https://www.pyimagesearch.com/wp-content/uploads/2017/05/drowsiness_detection_eye_localization.jpg",
-        false));
-    datatmp!.add(new DataTrackingDay(
-        "11111",
-        "22:00",
-        "21/6/2021",
-        "21/6/2021",
-        "2021",
-        "https://www.pyimagesearch.com/wp-content/uploads/2017/05/drowsiness_detection_eye_localization.jpg",
-        false));
-    datatmp!.add(new DataTrackingDay(
-        "11111",
-        "21:00",
-        "21/5/2021",
-        "21/5/2021",
-        "2021",
-        "https://www.pyimagesearch.com/wp-content/uploads/2017/05/drowsiness_detection_eye_localization.jpg",
-        false));
-    datatmp!.add(new DataTrackingDay(
-        "11111",
-        "21:00",
-        "21/6/2020",
-        "21/6/2020",
-        "2020",
-        "https://www.pyimagesearch.com/wp-content/uploads/2017/05/drowsiness_detection_eye_localization.jpg",
-        false));
-    datatmp!.add(new DataTrackingDay(
-        "11111",
-        "21:00",
-        "21/4/2020",
-        "21/6/2020",
-        "2020",
-        "https://www.pyimagesearch.com/wp-content/uploads/2017/05/drowsiness_detection_eye_localization.jpg",
-        false));
-    datatmp!.add(new DataTrackingDay(
-        "11111",
-        "21:00",
-        "21/6/2019",
-        "21/6/2020",
-        "2019",
-        "https://www.pyimagesearch.com/wp-content/uploads/2017/05/drowsiness_detection_eye_localization.jpg",
-        false));
-    _map = groupBy(datatmp!, (DataTrackingDay d){
-      return d.trackingDay;
+    // datatmp.clear();
+    // datatmp.add(new DataTrackingDay(
+    //     "11111",
+    //     "21:00",
+    //     "21/6/2021",
+    //     "6/2021",
+    //     "2021",
+    //     "https://www.pyimagesearch.com/wp-content/uploads/2017/05/drowsiness_detection_eye_localization.jpg",
+    //     false));
+    // datatmp.add(new DataTrackingDay(
+    //     "11111",
+    //     "22:00",
+    //     "21/6/2021",
+    //     "21/6/2021",
+    //     "2021",
+    //     "https://www.pyimagesearch.com/wp-content/uploads/2017/05/drowsiness_detection_eye_localization.jpg",
+    //     false));
+    // datatmp.add(new DataTrackingDay(
+    //     "11111",
+    //     "21:00",
+    //     "21/5/2021",
+    //     "21/5/2021",
+    //     "2021",
+    //     "https://www.pyimagesearch.com/wp-content/uploads/2017/05/drowsiness_detection_eye_localization.jpg",
+    //     false));
+    // datatmp.add(new DataTrackingDay(
+    //     "11111",
+    //     "21:00",
+    //     "21/6/2020",
+    //     "21/6/2020",
+    //     "2020",
+    //     "https://www.pyimagesearch.com/wp-content/uploads/2017/05/drowsiness_detection_eye_localization.jpg",
+    //     false));
+    // datatmp.add(new DataTrackingDay(
+    //     "11111",
+    //     "21:00",
+    //     "21/4/2020",
+    //     "21/6/2020",
+    //     "2020",
+    //     "https://www.pyimagesearch.com/wp-content/uploads/2017/05/drowsiness_detection_eye_localization.jpg",
+    //     false));
+    // datatmp.add(new DataTrackingDay(
+    //     "11111",
+    //     "21:00",
+    //     "21/6/2019",
+    //     "21/6/2020",
+    //     "2019",
+    //     "https://www.pyimagesearch.com/wp-content/uploads/2017/05/drowsiness_detection_eye_localization.jpg",
+    //     false));
+    _map = groupBy(listData, (DrownsinessDataTracking d){
+      var listDay = d.getTrackingDay.split("-");
+      var value = listDay[2] + "/" + listDay[1] + "/"+ listDay[0];
+      return value;
     });
     print("success");
     print(_map);
@@ -273,17 +277,17 @@ class MyListDrownsiness extends State<ListDrownsiness> {
       listViews.add(
           Padding(
             padding: const EdgeInsets.fromLTRB(10, 10, 170, 10),
-            child: Text(j.toString(), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0) ,textAlign: TextAlign.left,),
+            child: Text(j.toString(), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0) ,textAlign: TextAlign.left,),
           )
       );
-      List<DataTrackingDay>? listData = _map![j];
+      List<DrownsinessDataTracking>? listData = _map![j];
       for(var k in listData!){
         listViews.add(
           Card(
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
             child: InkWell(
               onTap: (){
-                _ontapItem(context,new DrownsinessDataTracking(k.gettrackingID, k.gettrackingTime, k.gettrackingDay, k.getimageUrl, k.getisDeleted));
+                _ontapItem(context,k);
               },
               child: Padding(
                 padding: EdgeInsets.fromLTRB(5, 10, 10, 10),
@@ -293,7 +297,7 @@ class MyListDrownsiness extends State<ListDrownsiness> {
                     Container(
                       width: 50,
                       height: 50,
-                      child: Image(image:NetworkImage(k.getimageUrl),),
+                      child: Image(image:NetworkImage(k.getImageUrl),),
                     ),
                     SizedBox(width: 10,),
                     Column(
@@ -301,7 +305,7 @@ class MyListDrownsiness extends State<ListDrownsiness> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Text(
-                          k.gettrackingDay,
+                          k.getTrackingDay,
                           style: TextStyle(
                             fontSize: 16.0,
                             color: Colors.black,
@@ -321,7 +325,7 @@ class MyListDrownsiness extends State<ListDrownsiness> {
                               ),
                             ),
                             Text(
-                              k.gettrackingTime,
+                              k.getTrackingTime,
                               style: TextStyle(
                                 fontSize: 14.0,
                                 color: Colors.grey,
@@ -340,6 +344,7 @@ class MyListDrownsiness extends State<ListDrownsiness> {
     }
   }
   void addAllListDataMonth(){
+    listViews.clear();
     // datatmp.clear();
     // for(var i in listData.reversed.toList()){
     //   String s = DataTrackingDay(
@@ -353,57 +358,59 @@ class MyListDrownsiness extends State<ListDrownsiness> {
     //   datatmp.add(s);
     // }
     // print(datatmp);
-    datatmp!.clear();
-    datatmp!.add(new DataTrackingDay(
-        "11111",
-        "21:00",
-        "21/6/2021",
-        "6/2021",
-        "2021",
-        "https://www.pyimagesearch.com/wp-content/uploads/2017/05/drowsiness_detection_eye_localization.jpg",
-        false));
-    datatmp!.add(new DataTrackingDay(
-        "11112",
-        "22:00",
-        "21/6/2021",
-        "6/2021",
-        "2021",
-        "https://www.pyimagesearch.com/wp-content/uploads/2017/05/drowsiness_detection_eye_localization.jpg",
-        false));
-    datatmp!.add(new DataTrackingDay(
-        "11113",
-        "21:00",
-        "21/5/2021",
-        "5/2021",
-        "2021",
-        "https://www.pyimagesearch.com/wp-content/uploads/2017/05/drowsiness_detection_eye_localization.jpg",
-        false));
-    datatmp!.add(new DataTrackingDay(
-        "11114",
-        "21:00",
-        "21/6/2020",
-        "6/2020",
-        "2020",
-        "https://www.pyimagesearch.com/wp-content/uploads/2017/05/drowsiness_detection_eye_localization.jpg",
-        false));
-    datatmp!.add(new DataTrackingDay(
-        "11115",
-        "21:00",
-        "21/4/2020",
-        "4/2020",
-        "2020",
-        "https://www.pyimagesearch.com/wp-content/uploads/2017/05/drowsiness_detection_eye_localization.jpg",
-        false));
-    datatmp!.add(new DataTrackingDay(
-        "11116",
-        "21:00",
-        "21/6/2019",
-        "6/2019",
-        "2019",
-        "https://www.pyimagesearch.com/wp-content/uploads/2017/05/drowsiness_detection_eye_localization.jpg",
-        false));
-    _map = groupBy(datatmp!, (DataTrackingDay d){
-      return d.trackingMonth;
+    // datatmp.clear();
+    // datatmp.add(new DataTrackingDay(
+    //     "11111",
+    //     "21:00",
+    //     "21/6/2021",
+    //     "6/2021",
+    //     "2021",
+    //     "https://www.pyimagesearch.com/wp-content/uploads/2017/05/drowsiness_detection_eye_localization.jpg",
+    //     false));
+    // datatmp.add(new DataTrackingDay(
+    //     "11112",
+    //     "22:00",
+    //     "21/6/2021",
+    //     "6/2021",
+    //     "2021",
+    //     "https://www.pyimagesearch.com/wp-content/uploads/2017/05/drowsiness_detection_eye_localization.jpg",
+    //     false));
+    // datatmp.add(new DataTrackingDay(
+    //     "11113",
+    //     "21:00",
+    //     "21/5/2021",
+    //     "5/2021",
+    //     "2021",
+    //     "https://www.pyimagesearch.com/wp-content/uploads/2017/05/drowsiness_detection_eye_localization.jpg",
+    //     false));
+    // datatmp.add(new DataTrackingDay(
+    //     "11114",
+    //     "21:00",
+    //     "21/6/2020",
+    //     "6/2020",
+    //     "2020",
+    //     "https://www.pyimagesearch.com/wp-content/uploads/2017/05/drowsiness_detection_eye_localization.jpg",
+    //     false));
+    // datatmp.add(new DataTrackingDay(
+    //     "11115",
+    //     "21:00",
+    //     "21/4/2020",
+    //     "4/2020",
+    //     "2020",
+    //     "https://www.pyimagesearch.com/wp-content/uploads/2017/05/drowsiness_detection_eye_localization.jpg",
+    //     false));
+    // datatmp.add(new DataTrackingDay(
+    //     "11116",
+    //     "21:00",
+    //     "21/6/2019",
+    //     "6/2019",
+    //     "2019",
+    //     "https://www.pyimagesearch.com/wp-content/uploads/2017/05/drowsiness_detection_eye_localization.jpg",
+    //     false));
+    _map = groupBy(listData, (DrownsinessDataTracking d){
+      var listDay = d.getTrackingDay.split("-");
+      var value = listDay[1] + "/"+ listDay[0];
+      return value;
     });
     print("success");
     print(_map);
@@ -411,17 +418,17 @@ class MyListDrownsiness extends State<ListDrownsiness> {
       listViews.add(
           Padding(
             padding: const EdgeInsets.fromLTRB(10, 10, 170, 10),
-            child: Text(j.toString(), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0) ,textAlign: TextAlign.left,),
+            child: Text(j.toString(), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0) ,textAlign: TextAlign.left,),
           )
       );
-      List<DataTrackingDay>? listData = _map![j];
+      List<DrownsinessDataTracking>? listData = _map![j];
       for(var k in listData!){
         listViews.add(
           Card(
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
             child: InkWell(
               onTap: (){
-                _ontapItem(context,new DrownsinessDataTracking(k.gettrackingID, k.gettrackingTime, k.gettrackingDay, k.getimageUrl, k.getisDeleted));
+                _ontapItem(context,k);
               },
               child: Padding(
                 padding: EdgeInsets.fromLTRB(5, 10, 10, 10),
@@ -431,7 +438,7 @@ class MyListDrownsiness extends State<ListDrownsiness> {
                     Container(
                       width: 50,
                       height: 50,
-                      child: Image(image:NetworkImage(k.getimageUrl),),
+                      child: Image(image:NetworkImage(k.getImageUrl),),
                     ),
                     SizedBox(width: 10,),
                     Column(
@@ -439,7 +446,7 @@ class MyListDrownsiness extends State<ListDrownsiness> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Text(
-                          k.gettrackingDay,
+                          k.getTrackingDay,
                           style: TextStyle(
                             fontSize: 16.0,
                             color: Colors.black,
@@ -459,7 +466,7 @@ class MyListDrownsiness extends State<ListDrownsiness> {
                               ),
                             ),
                             Text(
-                              k.gettrackingTime,
+                              k.getTrackingTime,
                               style: TextStyle(
                                 fontSize: 14.0,
                                 color: Colors.grey,
@@ -480,57 +487,59 @@ class MyListDrownsiness extends State<ListDrownsiness> {
   }
   void addAllListDataYear(){
     listViews.clear();
-    datatmp!.clear();
-    datatmp!.add(new DataTrackingDay(
-        "11111",
-        "21:00",
-        "21/6/2021",
-        "6/2021",
-        "2021",
-        "https://www.pyimagesearch.com/wp-content/uploads/2017/05/drowsiness_detection_eye_localization.jpg",
-        false));
-    datatmp!.add(new DataTrackingDay(
-        "11112",
-        "22:00",
-        "21/6/2021",
-        "6/2021",
-        "2021",
-        "https://www.pyimagesearch.com/wp-content/uploads/2017/05/drowsiness_detection_eye_localization.jpg",
-        false));
-    datatmp!.add(new DataTrackingDay(
-        "11113",
-        "21:00",
-        "21/5/2021",
-        "5/2021",
-        "2021",
-        "https://www.pyimagesearch.com/wp-content/uploads/2017/05/drowsiness_detection_eye_localization.jpg",
-        false));
-    datatmp!.add(new DataTrackingDay(
-        "11114",
-        "21:00",
-        "21/6/2020",
-        "6/2020",
-        "2020",
-        "https://www.pyimagesearch.com/wp-content/uploads/2017/05/drowsiness_detection_eye_localization.jpg",
-        false));
-    datatmp!.add(new DataTrackingDay(
-        "11115",
-        "21:00",
-        "21/4/2020",
-        "4/2020",
-        "2020",
-        "https://www.pyimagesearch.com/wp-content/uploads/2017/05/drowsiness_detection_eye_localization.jpg",
-        false));
-    datatmp!.add(new DataTrackingDay(
-        "11116",
-        "21:00",
-        "21/6/2019",
-        "6/2019",
-        "2019",
-        "https://www.pyimagesearch.com/wp-content/uploads/2017/05/drowsiness_detection_eye_localization.jpg",
-        false));
-    _map = groupBy(datatmp!, (DataTrackingDay d){
-      return d.trackingYear;
+    // datatmp.clear();
+    // datatmp.add(new DataTrackingDay(
+    //     "11111",
+    //     "21:00",
+    //     "21/6/2021",
+    //     "6/2021",
+    //     "2021",
+    //     "https://www.pyimagesearch.com/wp-content/uploads/2017/05/drowsiness_detection_eye_localization.jpg",
+    //     false));
+    // datatmp.add(new DataTrackingDay(
+    //     "11112",
+    //     "22:00",
+    //     "21/6/2021",
+    //     "6/2021",
+    //     "2021",
+    //     "https://www.pyimagesearch.com/wp-content/uploads/2017/05/drowsiness_detection_eye_localization.jpg",
+    //     false));
+    // datatmp.add(new DataTrackingDay(
+    //     "11113",
+    //     "21:00",
+    //     "21/5/2021",
+    //     "5/2021",
+    //     "2021",
+    //     "https://www.pyimagesearch.com/wp-content/uploads/2017/05/drowsiness_detection_eye_localization.jpg",
+    //     false));
+    // datatmp.add(new DataTrackingDay(
+    //     "11114",
+    //     "21:00",
+    //     "21/6/2020",
+    //     "6/2020",
+    //     "2020",
+    //     "https://www.pyimagesearch.com/wp-content/uploads/2017/05/drowsiness_detection_eye_localization.jpg",
+    //     false));
+    // datatmp.add(new DataTrackingDay(
+    //     "11115",
+    //     "21:00",
+    //     "21/4/2020",
+    //     "4/2020",
+    //     "2020",
+    //     "https://www.pyimagesearch.com/wp-content/uploads/2017/05/drowsiness_detection_eye_localization.jpg",
+    //     false));
+    // datatmp.add(new DataTrackingDay(
+    //     "11116",
+    //     "21:00",
+    //     "21/6/2019",
+    //     "6/2019",
+    //     "2019",
+    //     "https://www.pyimagesearch.com/wp-content/uploads/2017/05/drowsiness_detection_eye_localization.jpg",
+    //     false));
+    _map = groupBy(listData, (DrownsinessDataTracking d){
+      var listDay = d.getTrackingDay.split("-");
+      var value = listDay[0];
+      return value;
     });
     print("success");
     print(_map);
@@ -538,17 +547,17 @@ class MyListDrownsiness extends State<ListDrownsiness> {
       listViews.add(
           Padding(
             padding: const EdgeInsets.fromLTRB(10, 10, 170, 10),
-            child: Text(j.toString(), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0) ,textAlign: TextAlign.left,),
+            child: Text(j.toString(), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0) ,textAlign: TextAlign.left,),
           )
       );
-      List<DataTrackingDay>? listData = _map![j];
+      List<DrownsinessDataTracking>? listData = _map![j];
       for(var k in listData!){
         listViews.add(
           Card(
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
             child: InkWell(
               onTap: (){
-                _ontapItem(context,new DrownsinessDataTracking(k.gettrackingID, k.gettrackingTime, k.gettrackingDay, k.getimageUrl, k.getisDeleted));
+                _ontapItem(context,k);
               },
               child: Padding(
                 padding: EdgeInsets.fromLTRB(5, 10, 10, 10),
@@ -558,7 +567,7 @@ class MyListDrownsiness extends State<ListDrownsiness> {
                     Container(
                       width: 50,
                       height: 50,
-                      child: Image(image:NetworkImage(k.getimageUrl),),
+                      child: Image(image:NetworkImage(k.getImageUrl),),
                     ),
                     SizedBox(width: 10,),
                     Column(
@@ -566,7 +575,7 @@ class MyListDrownsiness extends State<ListDrownsiness> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Text(
-                          k.gettrackingDay,
+                          k.getTrackingDay,
                           style: TextStyle(
                             fontSize: 16.0,
                             color: Colors.black,
@@ -586,7 +595,7 @@ class MyListDrownsiness extends State<ListDrownsiness> {
                               ),
                             ),
                             Text(
-                              k.gettrackingTime,
+                              k.getTrackingTime,
                               style: TextStyle(
                                 fontSize: 14.0,
                                 color: Colors.grey,
@@ -604,6 +613,393 @@ class MyListDrownsiness extends State<ListDrownsiness> {
       }
     }
   }
+  // List<Widget> listViews = <Widget>[];
+  // List<DrownsinessDataTracking>? listData = <DrownsinessDataTracking>[];
+  // List<DataTrackingDay> datatmp =<DataTrackingDay>[];
+  // Map<String, List<DrownsinessDataTracking>>? _map;
+  // void addAllListDataDay(){
+  //   listViews.clear();
+  //   // datatmp.clear();
+  //   // datatmp.add(new DataTrackingDay(
+  //   //     "11111",
+  //   //     "21:00",
+  //   //     "21/6/2021",
+  //   //     "6/2021",
+  //   //     "2021",
+  //   //     "https://www.pyimagesearch.com/wp-content/uploads/2017/05/drowsiness_detection_eye_localization.jpg",
+  //   //     false));
+  //   // datatmp.add(new DataTrackingDay(
+  //   //     "11111",
+  //   //     "22:00",
+  //   //     "21/6/2021",
+  //   //     "21/6/2021",
+  //   //     "2021",
+  //   //     "https://www.pyimagesearch.com/wp-content/uploads/2017/05/drowsiness_detection_eye_localization.jpg",
+  //   //     false));
+  //   // datatmp.add(new DataTrackingDay(
+  //   //     "11111",
+  //   //     "21:00",
+  //   //     "21/5/2021",
+  //   //     "21/5/2021",
+  //   //     "2021",
+  //   //     "https://www.pyimagesearch.com/wp-content/uploads/2017/05/drowsiness_detection_eye_localization.jpg",
+  //   //     false));
+  //   // datatmp.add(new DataTrackingDay(
+  //   //     "11111",
+  //   //     "21:00",
+  //   //     "21/6/2020",
+  //   //     "21/6/2020",
+  //   //     "2020",
+  //   //     "https://www.pyimagesearch.com/wp-content/uploads/2017/05/drowsiness_detection_eye_localization.jpg",
+  //   //     false));
+  //   // datatmp.add(new DataTrackingDay(
+  //   //     "11111",
+  //   //     "21:00",
+  //   //     "21/4/2020",
+  //   //     "21/6/2020",
+  //   //     "2020",
+  //   //     "https://www.pyimagesearch.com/wp-content/uploads/2017/05/drowsiness_detection_eye_localization.jpg",
+  //   //     false));
+  //   // datatmp.add(new DataTrackingDay(
+  //   //     "11111",
+  //   //     "21:00",
+  //   //     "21/6/2019",
+  //   //     "21/6/2020",
+  //   //     "2019",
+  //   //     "https://www.pyimagesearch.com/wp-content/uploads/2017/05/drowsiness_detection_eye_localization.jpg",
+  //   //     false));
+  //   _map = groupBy(listData!, (DrownsinessDataTracking d){
+  //     return d.trackingDay;
+  //   });
+  //   print("success");
+  //   print(_map);
+  //   for(var j in _map!.keys){
+  //     listViews.add(
+  //         Padding(
+  //           padding: const EdgeInsets.fromLTRB(10, 10, 170, 10),
+  //           child: Text(j.toString(), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0) ,textAlign: TextAlign.left,),
+  //         )
+  //     );
+  //     List<DrownsinessDataTracking>? listData = _map![j];
+  //     for(var k in listData!){
+  //       listViews.add(
+  //         Card(
+  //           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+  //           child: InkWell(
+  //             onTap: (){
+  //               _ontapItem(context,k);
+  //             },
+  //             child: Padding(
+  //               padding: EdgeInsets.fromLTRB(5, 10, 10, 10),
+  //               child: Row(
+  //                 mainAxisAlignment: MainAxisAlignment.start,
+  //                 children: [
+  //                   Container(
+  //                     width: 50,
+  //                     height: 50,
+  //                     child: Image(image:NetworkImage(k.getImageUrl),),
+  //                   ),
+  //                   SizedBox(width: 10,),
+  //                   Column(
+  //                     mainAxisAlignment: MainAxisAlignment.start,
+  //                     crossAxisAlignment: CrossAxisAlignment.start,
+  //                     children: <Widget>[
+  //                       Text(
+  //                         k.getTrackingDay,
+  //                         style: TextStyle(
+  //                           fontSize: 16.0,
+  //                           color: Colors.black,
+  //                         ),
+  //                       ),
+  //                       SizedBox(
+  //                         height: 5.0,
+  //                       ),
+  //                       Row(
+  //                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+  //                         children: <Widget>[
+  //                           Text(
+  //                             "Alert at ",
+  //                             style: TextStyle(
+  //                               fontSize: 14.0,
+  //                               color: Colors.grey,
+  //                             ),
+  //                           ),
+  //                           Text(
+  //                             k.getTrackingTime,
+  //                             style: TextStyle(
+  //                               fontSize: 14.0,
+  //                               color: Colors.grey,
+  //                             ),
+  //                           ),
+  //                         ],
+  //                       ),
+  //                     ],
+  //                   ),
+  //                 ],
+  //               ),
+  //             ),
+  //           ),),
+  //       );
+  //     }
+  //   }
+  // }
+  // void addAllListDataMonth(){
+  //   listViews.clear();
+  //   // datatmp.clear();
+  //   // datatmp.add(new DataTrackingDay(
+  //   //     "11111",
+  //   //     "21:00",
+  //   //     "21/6/2021",
+  //   //     "6/2021",
+  //   //     "2021",
+  //   //     "https://www.pyimagesearch.com/wp-content/uploads/2017/05/drowsiness_detection_eye_localization.jpg",
+  //   //     false));
+  //   // datatmp.add(new DataTrackingDay(
+  //   //     "11112",
+  //   //     "22:00",
+  //   //     "21/6/2021",
+  //   //     "6/2021",
+  //   //     "2021",
+  //   //     "https://www.pyimagesearch.com/wp-content/uploads/2017/05/drowsiness_detection_eye_localization.jpg",
+  //   //     false));
+  //   // datatmp.add(new DataTrackingDay(
+  //   //     "11113",
+  //   //     "21:00",
+  //   //     "21/5/2021",
+  //   //     "5/2021",
+  //   //     "2021",
+  //   //     "https://www.pyimagesearch.com/wp-content/uploads/2017/05/drowsiness_detection_eye_localization.jpg",
+  //   //     false));
+  //   // datatmp.add(new DataTrackingDay(
+  //   //     "11114",
+  //   //     "21:00",
+  //   //     "21/6/2020",
+  //   //     "6/2020",
+  //   //     "2020",
+  //   //     "https://www.pyimagesearch.com/wp-content/uploads/2017/05/drowsiness_detection_eye_localization.jpg",
+  //   //     false));
+  //   // datatmp.add(new DataTrackingDay(
+  //   //     "11115",
+  //   //     "21:00",
+  //   //     "21/4/2020",
+  //   //     "4/2020",
+  //   //     "2020",
+  //   //     "https://www.pyimagesearch.com/wp-content/uploads/2017/05/drowsiness_detection_eye_localization.jpg",
+  //   //     false));
+  //   // datatmp.add(new DataTrackingDay(
+  //   //     "11116",
+  //   //     "21:00",
+  //   //     "21/6/2019",
+  //   //     "6/2019",
+  //   //     "2019",
+  //   //     "https://www.pyimagesearch.com/wp-content/uploads/2017/05/drowsiness_detection_eye_localization.jpg",
+  //   //     false));
+  //   _map = groupBy(listData!, (DrownsinessDataTracking d){
+  //     var tmp = d.trackingDay.split("/");
+  //     var valueDay = tmp[1] + "/" + tmp[2];
+  //     return valueDay;
+  //   });
+  //   print("success");
+  //   print(_map);
+  //   for(var j in _map!.keys){
+  //     listViews.add(
+  //         Padding(
+  //           padding: const EdgeInsets.fromLTRB(10, 10, 170, 10),
+  //           child: Text(j.toString(), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0) ,textAlign: TextAlign.left,),
+  //         )
+  //     );
+  //     List<DrownsinessDataTracking>? listData = _map![j];
+  //     for(var k in listData!){
+  //       listViews.add(
+  //         Card(
+  //           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+  //           child: InkWell(
+  //             onTap: (){
+  //               _ontapItem(context,k);
+  //             },
+  //             child: Padding(
+  //               padding: EdgeInsets.fromLTRB(5, 10, 10, 10),
+  //               child: Row(
+  //                 mainAxisAlignment: MainAxisAlignment.start,
+  //                 children: [
+  //                   Container(
+  //                     width: 50,
+  //                     height: 50,
+  //                     child: Image(image:NetworkImage(k.getImageUrl),),
+  //                   ),
+  //                   SizedBox(width: 10,),
+  //                   Column(
+  //                     mainAxisAlignment: MainAxisAlignment.start,
+  //                     crossAxisAlignment: CrossAxisAlignment.start,
+  //                     children: <Widget>[
+  //                       Text(
+  //                         k.getTrackingDay,
+  //                         style: TextStyle(
+  //                           fontSize: 16.0,
+  //                           color: Colors.black,
+  //                         ),
+  //                       ),
+  //                       SizedBox(
+  //                         height: 5.0,
+  //                       ),
+  //                       Row(
+  //                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+  //                         children: <Widget>[
+  //                           Text(
+  //                             "Alert at ",
+  //                             style: TextStyle(
+  //                               fontSize: 14.0,
+  //                               color: Colors.grey,
+  //                             ),
+  //                           ),
+  //                           Text(
+  //                             k.getTrackingTime,
+  //                             style: TextStyle(
+  //                               fontSize: 14.0,
+  //                               color: Colors.grey,
+  //                             ),
+  //                           ),
+  //                         ],
+  //                       ),
+  //                     ],
+  //                   ),
+  //                 ],
+  //               ),
+  //             ),
+  //           ),),
+  //       );
+  //     }
+  //   }
+  //
+  // }
+  // void addAllListDataYear(){
+  //   listViews.clear();
+  //   // datatmp.clear();
+  //   // datatmp.add(new DataTrackingDay(
+  //   //     "11111",
+  //   //     "21:00",
+  //   //     "21/6/2021",
+  //   //     "6/2021",
+  //   //     "2021",
+  //   //     "https://www.pyimagesearch.com/wp-content/uploads/2017/05/drowsiness_detection_eye_localization.jpg",
+  //   //     false));
+  //   // datatmp.add(new DataTrackingDay(
+  //   //     "11112",
+  //   //     "22:00",
+  //   //     "21/6/2021",
+  //   //     "6/2021",
+  //   //     "2021",
+  //   //     "https://www.pyimagesearch.com/wp-content/uploads/2017/05/drowsiness_detection_eye_localization.jpg",
+  //   //     false));
+  //   // datatmp.add(new DataTrackingDay(
+  //   //     "11113",
+  //   //     "21:00",
+  //   //     "21/5/2021",
+  //   //     "5/2021",
+  //   //     "2021",
+  //   //     "https://www.pyimagesearch.com/wp-content/uploads/2017/05/drowsiness_detection_eye_localization.jpg",
+  //   //     false));
+  //   // datatmp.add(new DataTrackingDay(
+  //   //     "11114",
+  //   //     "21:00",
+  //   //     "21/6/2020",
+  //   //     "6/2020",
+  //   //     "2020",
+  //   //     "https://www.pyimagesearch.com/wp-content/uploads/2017/05/drowsiness_detection_eye_localization.jpg",
+  //   //     false));
+  //   // datatmp.add(new DataTrackingDay(
+  //   //     "11115",
+  //   //     "21:00",
+  //   //     "21/4/2020",
+  //   //     "4/2020",
+  //   //     "2020",
+  //   //     "https://www.pyimagesearch.com/wp-content/uploads/2017/05/drowsiness_detection_eye_localization.jpg",
+  //   //     false));
+  //   // datatmp.add(new DataTrackingDay(
+  //   //     "11116",
+  //   //     "21:00",
+  //   //     "21/6/2019",
+  //   //     "6/2019",
+  //   //     "2019",
+  //   //     "https://www.pyimagesearch.com/wp-content/uploads/2017/05/drowsiness_detection_eye_localization.jpg",
+  //   //     false));
+  //   _map = groupBy(listData!, (DrownsinessDataTracking d){
+  //     var tmp = d.trackingDay.split("/");
+  //     var valueDay = tmp[2];
+  //     return valueDay;
+  //   });
+  //   print("success");
+  //   print(_map);
+  //   for(var j in _map!.keys){
+  //     listViews.add(
+  //         Padding(
+  //           padding: const EdgeInsets.fromLTRB(10, 10, 170, 10),
+  //           child: Text(j.toString(), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0) ,textAlign: TextAlign.left,),
+  //         )
+  //     );
+  //     List<DrownsinessDataTracking>? listData = _map![j];
+  //     for(var k in listData!){
+  //       listViews.add(
+  //         Card(
+  //           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+  //           child: InkWell(
+  //             onTap: (){
+  //               _ontapItem(context,k);
+  //             },
+  //             child: Padding(
+  //               padding: EdgeInsets.fromLTRB(5, 10, 10, 10),
+  //               child: Row(
+  //                 mainAxisAlignment: MainAxisAlignment.start,
+  //                 children: [
+  //                   Container(
+  //                     width: 50,
+  //                     height: 50,
+  //                     child: Image(image:NetworkImage(k.getImageUrl),),
+  //                   ),
+  //                   SizedBox(width: 10,),
+  //                   Column(
+  //                     mainAxisAlignment: MainAxisAlignment.start,
+  //                     crossAxisAlignment: CrossAxisAlignment.start,
+  //                     children: <Widget>[
+  //                       Text(
+  //                         k.getTrackingDay,
+  //                         style: TextStyle(
+  //                           fontSize: 16.0,
+  //                           color: Colors.black,
+  //                         ),
+  //                       ),
+  //                       SizedBox(
+  //                         height: 5.0,
+  //                       ),
+  //                       Row(
+  //                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+  //                         children: <Widget>[
+  //                           Text(
+  //                             "Alert at ",
+  //                             style: TextStyle(
+  //                               fontSize: 14.0,
+  //                               color: Colors.grey,
+  //                             ),
+  //                           ),
+  //                           Text(
+  //                             k.getTrackingTime,
+  //                             style: TextStyle(
+  //                               fontSize: 14.0,
+  //                               color: Colors.grey,
+  //                             ),
+  //                           ),
+  //                         ],
+  //                       ),
+  //                     ],
+  //                   ),
+  //                 ],
+  //               ),
+  //             ),
+  //           ),),
+  //       );
+  //     }
+  //   }
+  // }
   // void addAllListDataDay(){
   //   const count = 0;
   //   listViews.add(
@@ -1290,9 +1686,17 @@ class MyListDrownsiness extends State<ListDrownsiness> {
   @override
   void initState() {
       super.initState();
+      DataTrackingRepo().getDataTracking(widget.userResponse1!.userId, widget.userResponse1!.token)
+          .then((value){
+            print(value);
+            setState(() {
+              listData = value;
+              addAllListDataDay();
+            });
+      });
       addAllListDataDay();
   } // @override
   void _ontapItem(BuildContext context, DrownsinessDataTracking? drownsinessDataTracking){
-    Navigator.push(context, MaterialPageRoute(builder: (context) => TrackingDetail()));
+    Navigator.push(context, MaterialPageRoute(builder: (context) => TrackingDetail(drownsinessDataTracking!)));
   }
 }
