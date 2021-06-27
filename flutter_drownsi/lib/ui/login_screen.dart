@@ -137,7 +137,7 @@ class _LoginPageState extends State<LoginPage> {
                           imgUrl: FirebaseAuth.instance.currentUser!.photoURL,
                           gmail :FirebaseAuth.instance.currentUser!.email,
                           name: FirebaseAuth.instance.currentUser!.displayName,
-                          phoneNumber: FirebaseAuth.instance.currentUser!.phoneNumber,
+                          phoneNumber: "string",
                           uuid: FirebaseAuth.instance.currentUser!.uid);
                       var check;
                       await _handleLogin(context,p).then((value){
