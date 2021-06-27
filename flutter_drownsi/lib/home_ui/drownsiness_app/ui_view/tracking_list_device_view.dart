@@ -34,15 +34,15 @@ class MyListDrownsinessByDevice extends State<ListDrownsinessByDevice> {
                 0.0, 30 * (1.0 - widget.animation.value), 0.0),
             child: Padding(
               padding: const EdgeInsets.only(
-                  left: 24, right: 24, top: 16, bottom: 18),
+                  left: 24, right: 24, top: 8, bottom: 18),
               child: Container(
                 decoration: BoxDecoration(
                   color: FitnessAppTheme.white,
                   borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(8.0),
-                      bottomLeft: Radius.circular(8.0),
-                      bottomRight: Radius.circular(8.0),
-                      topRight: Radius.circular(48.0)),
+                      topLeft: Radius.circular(10.0),
+                      bottomLeft: Radius.circular(10.0),
+                      bottomRight: Radius.circular(10.0),
+                      topRight: Radius.circular(30.0)),
                   boxShadow: <BoxShadow>[
                     BoxShadow(
                         color: FitnessAppTheme.grey.withOpacity(0.2),
@@ -51,74 +51,28 @@ class MyListDrownsinessByDevice extends State<ListDrownsinessByDevice> {
                   ],
                 ),
                 child: Column(
-                  children: <Widget>[
+                  children: [
                     Padding(
-                      padding: const EdgeInsets.only(
-                          left: 24, right: 24, top: 8, bottom: 5),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: <Widget>[
-                          ButtonTheme(
-                            child: RaisedButton(
-                              onPressed: (){
-                                setState(() {
-                                  listViews.clear();
-                                  addAllListDataDay();
-                                });
-                              },
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
-                              // color: HexColor("#79a6ed"),
-                              color: Colors.greenAccent[400],
-                              child: Text("Day"),
-                            ),
-                            height: 36,
-                            minWidth: 70,
-                          ),
-                          ButtonTheme(
-                            child: FlatButton(
-                                onPressed: (){
-                                  setState(() {
-                                    listViews.clear();
-                                    addAllListDataMonth();
-                                  });
-                                },
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
-                                color: Colors.greenAccent[400],
-                                child: Text("Month")
-                            ),
-                            height: 36,
-                            minWidth: 70,
-                          ),
-                          ButtonTheme(
-                            child: FlatButton(
-                                onPressed: (){
-                                  setState(() {
-                                    listViews.clear();
-                                    addAllListDataYear();
-                                  });
-                                },
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
-                                color: Colors.greenAccent[400],
-                                child: Text("Year")),
-                            height: 36,
-                            minWidth: 70,
-                          ),
-
-                        ],
+                      padding:
+                      const EdgeInsets.only(left: 4.0, top: 8),
+                      child: Text(
+                        'Device',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontFamily:
+                          FitnessAppTheme.fontName,
+                          fontWeight: FontWeight.w500,
+                          fontSize: 18,
+                          letterSpacing: 0.0,
+                          color: FitnessAppTheme.darkText,
+                        ),
                       ),
                     ),
-                    //
                     Padding(
-                        padding: const EdgeInsets.only(
-                            left: 14, right: 14, top: 8, bottom: 8),
-                        child: listViews.isNotEmpty == true ? new Column(
-                          children: listViews,
-                        ) : new Column(
-                          children: [CircularProgressIndicator()],
-                        )
-                    )
-
+                      padding: const EdgeInsets.only(
+                        left: 4, right: 4, top: 8, bottom: 5),
+                      child: _buildPanel(),
+                    ),
                   ],
                 ),
               ),
@@ -132,248 +86,9 @@ class MyListDrownsinessByDevice extends State<ListDrownsinessByDevice> {
     await Future<dynamic>.delayed(const Duration(milliseconds: 50));
     return true;
   }
-  List<Widget> listViews = <Widget>[];
-  List<DrownsinessDataTracking> listData = <DrownsinessDataTracking>[];
-  List<DataTrackingDay> datatmp = <DataTrackingDay>[];
-  Map<String, List<DrownsinessDataTracking>>? _map;
-  void addAllListDataDay(){
-    listViews.clear();
-    _map = groupBy(listData, (DrownsinessDataTracking d){
-      return d.getTrackingDay;
-    });
-    print("success");
-    print(_map);
-    for(var j in _map!.keys){
-      listViews.add(
-          Padding(
-            padding: const EdgeInsets.fromLTRB(10, 10, 170, 10),
-            child: Text(j.toString(), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0) ,textAlign: TextAlign.left,),
-          )
-      );
-      List<DrownsinessDataTracking>? listData = _map![j];
-      for(var k in listData!){
-        listViews.add(
-          Card(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
-            child: InkWell(
-              onTap: (){
-                _ontapItem(context,k);
-              },
-              child: Padding(
-                padding: EdgeInsets.fromLTRB(5, 10, 10, 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Container(
-                      width: 50,
-                      height: 50,
-                      child: Image(image:NetworkImage(k.getImageUrl),),
-                    ),
-                    SizedBox(width: 10,),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text(
-                          k.getTrackingDay,
-                          style: TextStyle(
-                            fontSize: 16.0,
-                            color: Colors.black,
-                          ),
-                        ),
-                        SizedBox(
-                          height: 5.0,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: <Widget>[
-                            Text(
-                              "Alert at ",
-                              style: TextStyle(
-                                fontSize: 14.0,
-                                color: Colors.grey,
-                              ),
-                            ),
-                            Text(
-                              k.getTrackingTime,
-                              style: TextStyle(
-                                fontSize: 14.0,
-                                color: Colors.grey,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),),
-        );
-      }
-    }
-  }
-  void addAllListDataMonth(){
-    listViews.clear();
-    _map = groupBy(listData, (DrownsinessDataTracking d){
-      var listDay = d.getTrackingDay.split("/");
-      var value = listDay[1] + "/"+ listDay[2];
-      return value;
-    });
-    print("success");
-    print(_map);
-    for(var j in _map!.keys){
-      listViews.add(
-          Padding(
-            padding: const EdgeInsets.fromLTRB(10, 10, 170, 10),
-            child: Text(j.toString(), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0) ,textAlign: TextAlign.left,),
-          )
-      );
-      List<DrownsinessDataTracking>? listData = _map![j];
-      for(var k in listData!){
-        listViews.add(
-          Card(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
-            child: InkWell(
-              onTap: (){
-                _ontapItem(context,k);
-              },
-              child: Padding(
-                padding: EdgeInsets.fromLTRB(5, 10, 10, 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Container(
-                      width: 50,
-                      height: 50,
-                      child: Image(image:NetworkImage(k.getImageUrl),),
-                    ),
-                    SizedBox(width: 10,),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text(
-                          k.getTrackingDay,
-                          style: TextStyle(
-                            fontSize: 16.0,
-                            color: Colors.black,
-                          ),
-                        ),
-                        SizedBox(
-                          height: 5.0,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: <Widget>[
-                            Text(
-                              "Alert at ",
-                              style: TextStyle(
-                                fontSize: 14.0,
-                                color: Colors.grey,
-                              ),
-                            ),
-                            Text(
-                              k.getTrackingTime,
-                              style: TextStyle(
-                                fontSize: 14.0,
-                                color: Colors.grey,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),),
-        );
-      }
-    }
 
-  }
-  void addAllListDataYear(){
-    listViews.clear();
-    _map = groupBy(listData, (DrownsinessDataTracking d){
-      var listDay = d.getTrackingDay.split("/");
-      var value = listDay[2];
-      return value;
-    });
-    print("success");
-    print(_map);
-    for(var j in _map!.keys){
-      listViews.add(
-          Padding(
-            padding: const EdgeInsets.fromLTRB(10, 10, 170, 10),
-            child: Text(j.toString(), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0) ,textAlign: TextAlign.left,),
-          )
-      );
-      List<DrownsinessDataTracking>? listData = _map![j];
-      for(var k in listData!){
-        listViews.add(
-          Card(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
-            child: InkWell(
-              onTap: (){
-                _ontapItem(context,k);
-              },
-              child: Padding(
-                padding: EdgeInsets.fromLTRB(5, 10, 10, 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Container(
-                      width: 50,
-                      height: 50,
-                      child: Image(image:NetworkImage(k.getImageUrl),),
-                    ),
-                    SizedBox(width: 10,),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text(
-                          k.getTrackingDay,
-                          style: TextStyle(
-                            fontSize: 16.0,
-                            color: Colors.black,
-                          ),
-                        ),
-                        SizedBox(
-                          height: 5.0,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: <Widget>[
-                            Text(
-                              "Alert at ",
-                              style: TextStyle(
-                                fontSize: 14.0,
-                                color: Colors.grey,
-                              ),
-                            ),
-                            Text(
-                              k.getTrackingTime,
-                              style: TextStyle(
-                                fontSize: 14.0,
-                                color: Colors.grey,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),),
-        );
-      }
-    }
-  }
-  int count = 0;
-
+  List<DataList> dataDevice =<DataList>[];
+  List<ExpansionPanel> deviceExpansionPanel = <ExpansionPanel>[];
   @override
   void initState() {
     super.initState();
@@ -381,20 +96,111 @@ class MyListDrownsinessByDevice extends State<ListDrownsinessByDevice> {
         .then((value){
       print(value);
       List<DataTrackingOnEachDevice> dataTracking = value;
-      List<DrownsinessDataTracking> listTmp = <DrownsinessDataTracking>[];
+      List<DataList> dataDevicetmp =<DataList>[];
       for(var u in dataTracking){
+        List<Card> listDeviceTrackingData = <Card>[];
         for(var j in u.getDataTracking.reversed){
-          listTmp.add(j);
+          listDeviceTrackingData.add(
+            Card(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+              child: InkWell(
+                onTap: (){
+                  _ontapItem(context,j);
+                },
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(5, 10, 10, 10),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Container(
+                        width: 50,
+                        height: 50,
+                        child: Image(image:NetworkImage(j.getImageUrl),),
+                      ),
+                      SizedBox(width: 10,),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text(
+                            j.getTrackingDay,
+                            style: TextStyle(
+                              fontSize: 16.0,
+                              color: Colors.black,
+                            ),
+                          ),
+                          SizedBox(
+                            height: 5.0,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: <Widget>[
+                              Text(
+                                "Alert at ",
+                                style: TextStyle(
+                                  fontSize: 14.0,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                              Text(
+                                j.getTrackingTime,
+                                style: TextStyle(
+                                  fontSize: 14.0,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),),
+          );
         }
+        dataDevicetmp.add(DataList(u.device.deviceName, listDeviceTrackingData,false));
       }
       setState(() {
-        listData = listTmp;
-        addAllListDataDay();
+        dataDevice = dataDevicetmp;
       });
     });
-    addAllListDataDay();
   } // @override
   void _ontapItem(BuildContext context, DrownsinessDataTracking? drownsinessDataTracking){
     Navigator.push(context, MaterialPageRoute(builder: (context) => TrackingDetail(dataTracking: drownsinessDataTracking!, token: widget.userResponse1.token,)));
   }
+
+  Widget _buildPanel() {
+    return Container(
+      child: ExpansionPanelList(
+        expansionCallback: (int index, bool isExpanded) {
+          setState(() {
+            dataDevice[index].checkExpand = !isExpanded;
+          });
+        },
+        children: dataDevice.map<ExpansionPanel>((DataList item) {
+          return ExpansionPanel(
+            headerBuilder: (BuildContext context, bool isExpanded) {
+              return ListTile(
+                title: Text(item.deviceName),
+              );
+            },
+            body: Column(
+              children: item.dataDevcieTracking,
+            ),
+            isExpanded: item.checkExpand,
+          );
+        }).toList(),
+      ),
+    );
+  }
+}
+
+class DataList{
+  final String deviceName;
+  final List<Card> dataDevcieTracking;
+  bool checkExpand = false;
+
+  DataList(this.deviceName, this.dataDevcieTracking,this.checkExpand);
+
 }

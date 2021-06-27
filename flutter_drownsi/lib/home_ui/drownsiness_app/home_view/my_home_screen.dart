@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_drownsi/home_ui/drownsiness_app/models/UserResponseData.dart';
+import 'package:flutter_drownsi/home_ui/drownsiness_app/ui_view/tracking_list_device_view.dart';
 import 'package:flutter_drownsi/home_ui/drownsiness_app/ui_view/tracking_list_view.dart';
 
 import 'package:flutter_drownsi/home_ui/drownsiness_app/ui_view/title_view.dart';
@@ -77,6 +78,16 @@ class _MyHomeScreenState extends State<MyHomeScreen>
             parent: widget.animationController,
             curve:
                 Interval((1 / count) * 5, 1.0, curve: Curves.fastOutSlowIn))),
+        animationController: widget.animationController,
+        userResponse1: widget.userResponse,
+      ),
+    );
+    listViews.add(
+      ListDrownsinessByDevice(
+        animation: Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
+            parent: widget.animationController,
+            curve:
+            Interval((1 / count) * 6, 1.0, curve: Curves.fastOutSlowIn))),
         animationController: widget.animationController,
         userResponse1: widget.userResponse,
       ),
