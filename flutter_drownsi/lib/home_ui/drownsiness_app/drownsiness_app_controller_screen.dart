@@ -33,7 +33,7 @@ class _DrownsinessAppHomeScreenState extends State<DrownsinessAppHomeScreen>
 
     animationController = AnimationController(
         duration: const Duration(milliseconds: 600), vsync: this);
-    tabBody = MyHomeScreen(animationController: animationController);
+    tabBody = MyHomeScreen(animationController: animationController,userResponse:widget.userResponse ,);
     super.initState();
   }
 

@@ -412,6 +412,11 @@ class MapScreenState extends State<ProfilePage>
                       setState(() {
                         _status = true;
                         FocusScope.of(context).requestFocus(new FocusNode());
+                        AuthClass().signOut();
+                        Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(builder: (context) => LoginPage()),
+                        (route) => false);
                       });
                     },
                     shape: new RoundedRectangleBorder(

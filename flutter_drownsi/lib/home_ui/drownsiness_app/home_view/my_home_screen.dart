@@ -7,9 +7,9 @@ import 'package:flutter_drownsi/home_ui/drownsiness_app/drownsiness_app_theme.da
 import 'package:flutter/material.dart';
 
 class MyHomeScreen extends StatefulWidget {
-  const MyHomeScreen({Key? key, required this.animationController, this.userResponse}) : super(key: key);
+  const MyHomeScreen({Key? key, required this.animationController, required this.userResponse}) : super(key: key);
   final AnimationController animationController;
-  final UserResponse? userResponse;
+  final UserResponse userResponse;
   @override
   _MyHomeScreenState createState() => _MyHomeScreenState();
 }

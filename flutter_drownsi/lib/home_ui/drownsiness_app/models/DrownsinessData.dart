@@ -5,9 +5,10 @@ class DrownsinessDataTracking{
     final String trackingTime;
     final String trackingDay;
     final String imageUrl;
+    final String deviceId;
     final bool isDeleted;
 
-    DrownsinessDataTracking(this.trackingID, this.trackingTime,this.trackingDay, this.imageUrl,
+    DrownsinessDataTracking(this.trackingID, this.trackingTime,this.trackingDay, this.imageUrl,this.deviceId,
         this.isDeleted);
 
     String get getTrackingID => trackingID;
@@ -25,6 +26,7 @@ class DrownsinessDataTracking{
         readTimestamp(json["trackingAt"]),
         readDaystamp(json["trackingAt"]),
         json["imageUrl"],
+        json["deviceId"],
         json["deleted"],
       );
     }
@@ -51,7 +53,7 @@ class DrownsinessDataTracking{
 }
 String readDaystamp(int timestamp) {
   var now = new DateTime.now();
-  var format = new DateFormat('yyyy-MM-dd');
+  var format = new DateFormat('dd/MM/yyyy');
   var date = new DateTime.fromMicrosecondsSinceEpoch(timestamp * 1000);
   var diff = date.difference(now);
   var time = '';

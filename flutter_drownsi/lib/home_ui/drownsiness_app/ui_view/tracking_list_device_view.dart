@@ -9,18 +9,18 @@ import 'package:collection/collection.dart';
 import 'package:flutter_drownsi/home_ui/drownsiness_app/util/DeviceRepo.dart';
 
 
-class ListDrownsiness extends StatefulWidget {
+class ListDrownsinessByDevice extends StatefulWidget {
   final AnimationController animationController;
   final Animation<double> animation;
   final UserResponse userResponse1;
-  const ListDrownsiness({Key? key, required this.animationController, required this.animation, required this.userResponse1})
+  const ListDrownsinessByDevice({Key? key, required this.animationController, required this.animation, required this.userResponse1})
       : super(key: key);
 
   @override
-  MyListDrownsiness createState() => MyListDrownsiness();
+  MyListDrownsinessByDevice createState() => MyListDrownsinessByDevice();
 
 }
-class MyListDrownsiness extends State<ListDrownsiness> {
+class MyListDrownsinessByDevice extends State<ListDrownsinessByDevice> {
 
   @override
   Widget build(BuildContext context) {
@@ -52,83 +52,6 @@ class MyListDrownsiness extends State<ListDrownsiness> {
                 ),
                 child: Column(
                   children: <Widget>[
-                    Padding(
-                      padding:
-                          const EdgeInsets.only(top: 16, left: 16, right: 24),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: <Widget>[
-                              Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: <Widget>[
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: <Widget>[
-                                      Icon(
-                                        Icons.access_time,
-                                        color: FitnessAppTheme.grey
-                                            .withOpacity(0.5),
-                                        size: 16,
-                                      ),
-                                      Padding(
-                                        padding:
-                                            const EdgeInsets.only(left: 4.0),
-                                        child: Text(
-                                          'Today 8:26 AM',
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                            fontFamily:
-                                                FitnessAppTheme.fontName,
-                                            fontWeight: FontWeight.w500,
-                                            fontSize: 14,
-                                            letterSpacing: 0.0,
-                                            color: FitnessAppTheme.grey
-                                                .withOpacity(0.5),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        top: 4, bottom: 14),
-                                    child: Text(
-                                      'Ban da ngu gat',
-                                      textAlign: TextAlign.left,
-                                      style: TextStyle(
-                                        fontFamily: FitnessAppTheme.fontName,
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 12,
-                                        letterSpacing: 0.0,
-                                        color: Colors.redAccent,
-                                        // color: FitnessAppTheme.nearlyDarkBlue,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              )
-                            ],
-                          )
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                          left: 24, right: 24, top: 8, bottom: 8),
-                      child: Container(
-                        height: 2,
-                        decoration: BoxDecoration(
-                          color: FitnessAppTheme.background,
-                          borderRadius: BorderRadius.all(Radius.circular(4.0)),
-                        ),
-                      ),
-                    ),
                     Padding(
                       padding: const EdgeInsets.only(
                           left: 24, right: 24, top: 8, bottom: 5),
@@ -453,23 +376,23 @@ class MyListDrownsiness extends State<ListDrownsiness> {
 
   @override
   void initState() {
-      super.initState();
-      DeviceRepo().getDataTrackingWithDevice(widget.userResponse1.userId, widget.userResponse1.token)
-          .then((value){
-            print(value);
-            List<DataTrackingOnEachDevice> dataTracking = value;
-            List<DrownsinessDataTracking> listTmp = <DrownsinessDataTracking>[];
-            for(var u in dataTracking){
-              for(var j in u.getDataTracking.reversed){
-                listTmp.add(j);
-            }
-            }
-            setState(() {
-              listData = listTmp;
-              addAllListDataDay();
-            });
-          });
-      addAllListDataDay();
+    super.initState();
+    DeviceRepo().getDataTrackingWithDevice(widget.userResponse1.userId, widget.userResponse1.token)
+        .then((value){
+      print(value);
+      List<DataTrackingOnEachDevice> dataTracking = value;
+      List<DrownsinessDataTracking> listTmp = <DrownsinessDataTracking>[];
+      for(var u in dataTracking){
+        for(var j in u.getDataTracking.reversed){
+          listTmp.add(j);
+        }
+      }
+      setState(() {
+        listData = listTmp;
+        addAllListDataDay();
+      });
+    });
+    addAllListDataDay();
   } // @override
   void _ontapItem(BuildContext context, DrownsinessDataTracking? drownsinessDataTracking){
     Navigator.push(context, MaterialPageRoute(builder: (context) => TrackingDetail(dataTracking: drownsinessDataTracking!, token: widget.userResponse1.token,)));
