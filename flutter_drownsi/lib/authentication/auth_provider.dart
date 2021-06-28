@@ -1,5 +1,4 @@
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter_facebook_login/flutter_facebook_login.dart'; // ignore: import_of_legacy_library_into_null_safe
+import 'package:firebase_auth/firebase_auth.dart';// ignore: import_of_legacy_library_into_null_safe
 import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthClass{
@@ -8,7 +7,6 @@ class AuthClass{
     auth.currentUser!.delete();
     auth.signOut();
     GoogleSignIn().signOut();
-    FacebookLogin().logOut();
   }
   Future signInWithGoogle() async{
     final GoogleSignInAccount googleUser;
@@ -21,14 +19,6 @@ class AuthClass{
       );
       return await FirebaseAuth.instance.signInWithCredential(credential);
 
-    }
-    Future signInWithFacebook() async{
-      final FacebookLoginResult result = await FacebookLogin().logIn(['email']);
-      if(result.status == FacebookLoginStatus.loggedIn) {
-        final OAuthCredential credential = FacebookAuthProvider.credential(result.accessToken.token);
-        return await FirebaseAuth.instance.signInWithCredential(
-            credential);
-      }
     }
 
   // Future<void> submitPhoneNumber(String phonenumber) async{

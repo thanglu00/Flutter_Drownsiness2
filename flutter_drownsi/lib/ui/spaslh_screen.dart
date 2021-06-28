@@ -16,7 +16,7 @@ class _SplashState extends State<Splash>{
   FirebaseAuth auth = FirebaseAuth.instance;
   @override
   Widget build(BuildContext context) {
-    Future.delayed(const Duration(seconds: 1),() async {
+    Future.delayed(const Duration(seconds: 0),() async {
       if(auth.currentUser == null){
         Navigator.pushAndRemoveUntil(
             context,
@@ -47,9 +47,7 @@ class _SplashState extends State<Splash>{
     });
     return Scaffold(
       body: Center(
-        child: FlutterLogo(
-          size: 80,
-        ),
+        child: Image.asset("assets/images/logo.png", height: 200,),
       ),
     );
   }

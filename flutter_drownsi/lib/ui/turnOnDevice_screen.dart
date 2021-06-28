@@ -45,7 +45,10 @@ class TurnOnOffDevice extends StatelessWidget{
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.subdirectory_arrow_left, color: Colors.white,),
+                      Image(
+                        image: AssetImage("assets/images/qr_icon.png"),
+                        width: 50.0,
+                      ),
                       Text('Turn on device',textAlign: TextAlign.center, style: TextStyle(color: Colors.white),)
                     ],
                   ),

@@ -19,194 +19,88 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
+      body: Container(
+        color: Colors.white,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             const SizedBox(height: 100.0),
-            Stack(
-              children: <Widget>[
-                Positioned(
-                  left: 20.0,
-                  top: 15.0,
-                  child: Container(
-                    decoration: BoxDecoration(
-                        color: Colors.greenAccent,
-                        borderRadius: BorderRadius.circular(20.0)),
-                    width: 70.0,
-                    height: 20.0,
+            Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  const SizedBox(height: 100.0),
+                  Image.asset("assets/images/logo.png", height: 250),
+                  const SizedBox(height: 50.0),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      OutlineButton.icon(
+                        padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30.0)),
+                        borderSide: BorderSide(color: Colors.grey),
+                        color: Colors.green,
+                        highlightedBorderColor: Colors.green,
+                        textColor: Colors.red,
+                        label: Text("Sign in with Google"),
+                        icon: Image(image: AssetImage("assets/images/google_logo.png"), height: 35.0),
+                        onPressed: () {
+                          //sign in with google
+                          AuthClass()
+                              .signInWithGoogle()
+                              .then((value) async {
+                            final displayname = value.user!.displayName;
+                            print(displayname);
+                            UserPost p = new UserPost(
+                                imgUrl: FirebaseAuth.instance.currentUser!.photoURL,
+                                gmail :FirebaseAuth.instance.currentUser!.email,
+                                name: FirebaseAuth.instance.currentUser!.displayName,
+                                phoneNumber: "string",
+                                uuid: FirebaseAuth.instance.currentUser!.uid);
+                            var check;
+                            await _handleLogin(context,p).then((value){
+                              check = value.active;
+
+                              if(check) {
+                                print(check);
+                                print("Login success");
+                                Navigator.pushAndRemoveUntil(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => DrownsinessAppHomeScreen(userResponse:value,)),
+                                        (route) => false);
+                              }
+                            });
+                          });
+                        },
+                      ),
+                      const SizedBox(width: 10.0),
+                    ],
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 32.0),
-                  child: Text(
-                    "Login",
-                    style:
-                        TextStyle(fontSize: 30.0, fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 20.0),
-            Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 32, vertical: 8.0),
-              child: TextField(
-                maxLength: 10,
-                keyboardType: TextInputType.number,
-                controller: phoneController,
-                decoration: InputDecoration(
-                    prefix: Padding(
-                      padding: EdgeInsets.all(4),
-                      child: Text('+84'),
+                  const SizedBox(height: 10.0,),
+
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 52, vertical: 8.0),
+                    child: InkWell(
+                      child:
+                      Text(
+                        "Offline feature >>>",
+                        style: TextStyle(
+                          decoration: TextDecoration.underline,
+                          decorationStyle: TextDecorationStyle.solid,
+                          color: Colors.greenAccent[700],
+                          fontSize:12,
+                        ),
+
+                      ),
+                      onTap:() => Navigator.push(context, MaterialPageRoute(builder: (context) => TurnOnOffDevice())) ,
                     ),
-                    labelText: "Phone number", hasFloatingPlaceholder: true),
-
+                  ),
+                ],
               ),
             ),
-            const SizedBox(height: 20.0),
-            Align(
-              alignment: Alignment.center,
-              child: RaisedButton(
-                padding: const EdgeInsets.fromLTRB(40.0, 16.0, 20.0, 16.0),
-                color: Colors.greenAccent,
-                elevation: 0,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(30.0),
-                        bottomLeft: Radius.circular(30.0),
-                        topRight: Radius.circular(30.0),
-                        bottomRight: Radius.circular(30.0))),
-                onPressed: () {
-                  if(phoneController.text.isNotEmpty){
-                    Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => OTPScreen(phoneController.text)));
-                  }
-                },
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    Text(
-                      "Send OTP".toUpperCase(),
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold, fontSize: 16.0),
-                    ),
-                    const SizedBox(width: 10.0),
-                    Icon(
-                      FontAwesomeIcons.arrowRight,
-                      size: 18.0,
-                    )
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(height: 20.0),
-            Padding(
-              padding:
-              const EdgeInsets.symmetric(horizontal: 122, vertical: 8.0),
-              child: Text('or you can sign by', textAlign: TextAlign.center,),
-            ),
-            const SizedBox(height: 10.0),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                OutlineButton.icon(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 8.0,
-                    horizontal: 30.0,
-                  ),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20.0)),
-                  borderSide: BorderSide(color: Colors.red),
-                  color: Colors.red,
-                  highlightedBorderColor: Colors.red,
-                  textColor: Colors.red,
-                  icon: Icon(
-                    FontAwesomeIcons.googlePlusG,
-                    size: 18.0,
-                  ),
-                  label: Text("Google"),
-                  onPressed: () {
-                    //sign in with google
-                    AuthClass()
-                        .signInWithGoogle()
-                        .then((value) async {
-                      final displayname = value.user!.displayName;
-                      print(displayname);
-                      UserPost p = new UserPost(
-                          imgUrl: FirebaseAuth.instance.currentUser!.photoURL,
-                          gmail :FirebaseAuth.instance.currentUser!.email,
-                          name: FirebaseAuth.instance.currentUser!.displayName,
-                          phoneNumber: "string",
-                          uuid: FirebaseAuth.instance.currentUser!.uid);
-                      var check;
-                      await _handleLogin(context,p).then((value){
-                        check = value.active;
-
-                      if(check) {
-                        print(check);
-                        print("Login success");
-                        Navigator.pushAndRemoveUntil(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => DrownsinessAppHomeScreen(userResponse:value,)),
-                                (route) => false);
-                      }
-                      });
-                    });
-                  },
-                ),
-                const SizedBox(width: 10.0),
-                OutlineButton.icon(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 8.0,
-                    horizontal: 30.0,
-                  ),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20.0)),
-                  highlightedBorderColor: Colors.indigo,
-                  borderSide: BorderSide(color: Colors.indigo),
-                  color: Colors.indigo,
-                  textColor: Colors.indigo,
-                  icon: Icon(
-                    FontAwesomeIcons.facebookF,
-                    size: 18.0,
-                  ),
-                  label: Text("Facebook"),
-                  onPressed: () {
-                    AuthClass()
-                        .signInWithFacebook()
-                        .then((value) async {
-                      final displayname = value.user!.displayName;
-                      print(displayname);
-                      Navigator.pushAndRemoveUntil(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => DrownsinessAppHomeScreen(userResponse: value,)),
-                              (route)=> false);
-                    });
-                  },
-                ),
-              ],
-            ),
-            const SizedBox(height: 40.0,),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 52, vertical: 8.0),
-              child: InkWell(
-                child:
-                Text(
-                  "Control the device offline >>>",
-                  style: TextStyle(
-                      decoration: TextDecoration.underline,
-                      decorationStyle: TextDecorationStyle.solid,
-                      color: Colors.greenAccent[700],
-                      fontSize:18,
-                  ),
-
-                ),
-                onTap:() => Navigator.push(context, MaterialPageRoute(builder: (context) => TurnOnOffDevice())) ,
-              ),
-            )
           ],
         ),
       ),
@@ -244,10 +138,12 @@ class Dialogs {
                   children: <Widget>[
                     Center(
                       child: Column(children: [
-                        CircularProgressIndicator(),
+                        CircularProgressIndicator(
+                          color: Colors.green,
+                        ),
                         SizedBox(height: 10,),
                         Text("Please Wait....",
-                          style: TextStyle(color: Colors.blueAccent),)
+                          style: TextStyle(color: Colors.green))
                       ]),
                     )
                   ]));

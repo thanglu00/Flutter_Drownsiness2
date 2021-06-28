@@ -2,6 +2,12 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_drownsi/ui/login_screen.dart';
 import 'package:flutter_drownsi/ui/spaslh_screen.dart';
+import 'package:flutter_drownsi/ui/pages/init_screen.dart';
+
+var routes = <String, WidgetBuilder>{
+  "/splash": (BuildContext context) => Splash(),
+  "/login": (BuildContext context) => LoginPage(),
+};
 
 void main() {
   runApp(MyApp());
@@ -13,7 +19,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: MyHomePage(),
+      home: SplashScreen(),
+      routes: routes,
     );
   }
 }
