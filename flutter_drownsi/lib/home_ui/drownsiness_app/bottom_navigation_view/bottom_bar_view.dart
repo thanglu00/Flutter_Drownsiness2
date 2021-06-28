@@ -50,11 +50,11 @@ class _BottomBarViewState extends State<BottomBarView>
                                 parent: animationController,
                                 curve: Curves.fastOutSlowIn))
                             .value *
-                        38.0),
+                        40.0),
                 child: Column(
                   children: <Widget>[
                     SizedBox(
-                      height: 62,
+                      height: 40,
                       child: Padding(
                         padding:
                             const EdgeInsets.only(left: 8, right: 8, top: 4),
@@ -134,7 +134,7 @@ class _BottomBarViewState extends State<BottomBarView>
                   padding: const EdgeInsets.all(8.0),
                   child: ScaleTransition(
                     alignment: Alignment.center,
-                    scale: Tween<double>(begin: 0.0, end: 1.0).animate(
+                    scale: Tween<double>(begin: 0.0, end: 1.2).animate(
                         CurvedAnimation(
                             parent: animationController,
                             curve: Curves.fastOutSlowIn)),
@@ -170,9 +170,9 @@ class _BottomBarViewState extends State<BottomBarView>
                             widget.changeIndex(1);
                           },
                           child: Icon(
-                            Icons.blur_circular,
+                            Icons.qr_code_scanner,
                             color: FitnessAppTheme.white,
-                            size: 32,
+                            size: 30,
                           ),
                         ),
                       ),

@@ -46,8 +46,11 @@ class _SplashState extends State<Splash>{
       }
     });
     return Scaffold(
-      body: Center(
-        child: Image.asset("assets/images/logo.png", height: 200,),
+      body: Container(
+        color: Colors.white,
+        child: Center(
+          child: Image.asset("assets/images/logo.png", height: 200,),
+        ),
       ),
     );
   }

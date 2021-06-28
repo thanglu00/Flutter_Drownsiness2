@@ -184,20 +184,19 @@ class _MyHomeScreenState extends State<MyHomeScreen>
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
-                            Expanded(
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text(
-                                  'Hello ' + user!.split(" ").first,
-                                  textAlign: TextAlign.left,
-                                  style: TextStyle(
-                                    fontFamily: FitnessAppTheme.fontName,
-                                    fontWeight: FontWeight.w700,
-                                    fontSize: 22 + 6 - 6 * topBarOpacity,
-                                    letterSpacing: 1.2,
-                                    color: FitnessAppTheme.darkerText,
-                                  ),
-                                ),
+                            CircleAvatar(
+                                radius: 15,
+                                backgroundImage: NetworkImage(widget.userResponse.avatar)
+                            ),
+                            SizedBox(width: 10.0),
+                            Text(
+                              user!.split(" ").first,
+                              textAlign: TextAlign.left,
+                              style: TextStyle(
+                                fontFamily: FitnessAppTheme.fontName,
+                                fontSize: 14 + 6 - 6 * topBarOpacity,
+                                letterSpacing: 1.2,
+                                color: Colors.grey,
                               ),
                             ),
                             // SizedBox(

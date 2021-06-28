@@ -98,6 +98,16 @@ class _DrownsinessAppHomeScreenState extends State<DrownsinessAppHomeScreen>
                       MyHomeScreen(animationController: animationController,userResponse: widget.userResponse,);
                 });
               });
+            } else if (index == 2) {
+              animationController.reverse().then<dynamic>((data) {
+                if (!mounted) {
+                  return;
+                }
+                setState(() {
+                  tabBody =
+                      QRScreen(animationController: animationController);
+                });
+              });
             } else if (index == 3) {
               animationController.reverse().then<dynamic>((data) {
                 if (!mounted) {
