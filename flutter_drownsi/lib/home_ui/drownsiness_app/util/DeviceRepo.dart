@@ -6,6 +6,7 @@ import 'package:flutter_drownsi/home_ui/drownsiness_app/models/DrownsinessData.d
 import 'package:http/http.dart' as http;
 
 class DeviceRepo {
+
   Future<List<DataTrackingOnEachDevice>> getDataTrackingWithDevice(String userID, String token) async {
     final String baseUrl = "https://dhdev-drowsiness123.herokuapp.com/api/v1/data-trackings/users/$userID";
     final result = await http.get(Uri.parse(baseUrl), headers: {
@@ -42,8 +43,7 @@ class DeviceRepo {
       throw new Exception('Error getting tracking list');
     }else{
 
-      var json = jsonDecode(result.body);
-      print(json);
+      var json = jsonDecode(utf8.decode(result.bodyBytes));
       Device data = Device.fromJson(json['result']);
       return data;
     }

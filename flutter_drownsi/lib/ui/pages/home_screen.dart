@@ -1,19 +1,18 @@
-import 'dart:ffi';
-
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter_drownsi/home_ui/drownsiness_app/drownsiness_app_controller_screen.dart';
 import 'package:flutter_drownsi/home_ui/drownsiness_app/models/UserResponseData.dart';
-import 'package:flutter_drownsi/ui/backend/linked_device.dart';
+import 'package:flutter_drownsi/home_ui/drownsiness_app/ui_view/tracking_list_device_view.dart';
+import 'package:flutter_drownsi/home_ui/drownsiness_app/ui_view/tracking_list_view.dart';
+
 import 'package:flutter_drownsi/home_ui/drownsiness_app/ui_view/title_view.dart';
 import 'package:flutter_drownsi/home_ui/drownsiness_app/drownsiness_app_theme.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_drownsi/ui/backend/tracking_history.dart';
 
 class MyHomeScreen extends StatefulWidget {
   const MyHomeScreen({Key? key, required this.animationController, required this.userResponse}) : super(key: key);
   final AnimationController animationController;
   final UserResponse userResponse;
   @override
+
   _MyHomeScreenState createState() => _MyHomeScreenState();
 }
 
@@ -32,7 +31,7 @@ class _MyHomeScreenState extends State<MyHomeScreen>
         CurvedAnimation(
             parent: widget.animationController,
             curve: Interval(0, 0.5, curve: Curves.fastOutSlowIn)));
-    listViews = addAllListData(listViews);
+    addAllListData();
 
     scrollController.addListener(() {
       if (scrollController.offset >= 24) {
@@ -59,12 +58,12 @@ class _MyHomeScreenState extends State<MyHomeScreen>
     super.initState();
   }
 
-  List<Widget> addAllListData(List<Widget> x) {
+  void addAllListData() {
     const int count = 9;
 
-    x.add(
+    listViews.add(
       TitleView(
-        titleTxt: 'Connected Device',
+        titleTxt: 'Tracking History',
         subTxt: '',
         animation: Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
             parent: widget.animationController,
@@ -74,31 +73,8 @@ class _MyHomeScreenState extends State<MyHomeScreen>
       ),
     );
 
-    x.add(
-      new LinkedDeviceWidget(
-        animation: Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
-            parent: widget.animationController,
-            curve:
-                Interval((1 / count) * 5, 1.0, curve: Curves.fastOutSlowIn))),
-        animationController: widget.animationController,
-        userResponse1: widget.userResponse,
-      ),
-    );
-
-    x.add(
-      TitleView(
-        titleTxt: 'Tracking History',
-        subTxt: '',
-        animation: Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
-            parent: widget.animationController,
-            curve:
-                Interval((1 / count) * 4, 1.0, curve: Curves.fastOutSlowIn))),
-        animationController: widget.animationController,
-      ),
-    );
-
-    x.add(
-      new TrackingHistoryWidget(
+    listViews.add(
+      ListDrownsiness(
         animation: Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
             parent: widget.animationController,
             curve:
@@ -107,21 +83,21 @@ class _MyHomeScreenState extends State<MyHomeScreen>
         userResponse1: widget.userResponse,
       ),
     );
-
-    return x;
+    listViews.add(
+      ListDrownsinessByDevice(
+        animation: Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
+            parent: widget.animationController,
+            curve:
+            Interval((1 / count) * 6, 1.0, curve: Curves.fastOutSlowIn))),
+        animationController: widget.animationController,
+        userResponse1: widget.userResponse,
+      ),
+    );
   }
 
   Future<bool> getData() async {
     await Future<dynamic>.delayed(const Duration(milliseconds: 50));
     return true;
-  }
-
-  Future<bool> refresh() async {
-    AnimationController animationController = AnimationController(
-        duration: const Duration(milliseconds: 1000), vsync: this);
-    Navigator.pushReplacement(context,
-        MaterialPageRoute(builder: (context)=> DrownsinessAppHomeScreen(userResponse: widget.userResponse)));
-    return Future.value(false);
   }
 
   @override
@@ -150,10 +126,8 @@ class _MyHomeScreenState extends State<MyHomeScreen>
         if (!snapshot.hasData) {
           return const SizedBox();
         } else {
-          return RefreshIndicator(
-              onRefresh: refresh,
-              child: ListView.builder(
-            //controller: scrollController,
+          return ListView.builder(
+            controller: scrollController,
             padding: EdgeInsets.only(
               top: AppBar().preferredSize.height +
                   MediaQuery.of(context).padding.top +
@@ -166,7 +140,6 @@ class _MyHomeScreenState extends State<MyHomeScreen>
               widget.animationController.forward();
               return listViews[index];
             },
-          ),
           );
         }
       },
@@ -187,8 +160,8 @@ class _MyHomeScreenState extends State<MyHomeScreen>
                 child: Container(
                   decoration: BoxDecoration(
                     color: FitnessAppTheme.white.withOpacity(topBarOpacity),
-                    borderRadius: const BorderRadius.all(
-                        Radius.circular(32.0),
+                    borderRadius: const BorderRadius.only(
+                      bottomLeft: Radius.circular(32.0),
                     ),
                     boxShadow: <BoxShadow>[
                       BoxShadow(
@@ -227,6 +200,67 @@ class _MyHomeScreenState extends State<MyHomeScreen>
                                 color: Colors.grey,
                               ),
                             ),
+                            // SizedBox(
+                            //   height: 38,
+                            //   width: 38,
+                            //   child: InkWell(
+                            //     highlightColor: Colors.transparent,
+                            //     borderRadius: const BorderRadius.all(
+                            //         Radius.circular(32.0)),
+                            //     onTap: () {},
+                            //     child: Center(
+                            //       child: Icon(
+                            //         Icons.keyboard_arrow_left,
+                            //         color: FitnessAppTheme.grey,
+                            //       ),
+                            //     ),
+                            //   ),
+                            // ),
+                            // Padding(
+                            //   padding: const EdgeInsets.only(
+                            //     left: 8,
+                            //     right: 8,
+                            //   ),
+                            //   child: Row(
+                            //     children: <Widget>[
+                            //       Padding(
+                            //         padding: const EdgeInsets.only(right: 8),
+                            //         child: Icon(
+                            //           Icons.calendar_today,
+                            //           color: FitnessAppTheme.grey,
+                            //           size: 18,
+                            //         ),
+                            //       ),
+                            //       Text(
+                            //         '15 May',
+                            //         textAlign: TextAlign.left,
+                            //         style: TextStyle(
+                            //           fontFamily: FitnessAppTheme.fontName,
+                            //           fontWeight: FontWeight.normal,
+                            //           fontSize: 18,
+                            //           letterSpacing: -0.2,
+                            //           color: FitnessAppTheme.darkerText,
+                            //         ),
+                            //       ),
+                            //     ],
+                            //   ),
+                            // ),
+                            // SizedBox(
+                            //   height: 38,
+                            //   width: 38,
+                            //   child: InkWell(
+                            //     highlightColor: Colors.transparent,
+                            //     borderRadius: const BorderRadius.all(
+                            //         Radius.circular(32.0)),
+                            //     onTap: () {},
+                            //     child: Center(
+                            //       child: Icon(
+                            //         Icons.keyboard_arrow_right,
+                            //         color: FitnessAppTheme.grey,
+                            //       ),
+                            //     ),
+                            //   ),
+                            // ),
                           ],
                         ),
                       )

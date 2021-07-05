@@ -32,8 +32,8 @@ class _DrownsinessAppHomeScreenState extends State<DrownsinessAppHomeScreen>
     tabIconsList[0].isSelected = true;
 
     animationController = AnimationController(
-        duration: const Duration(milliseconds: 600), vsync: this);
-    tabBody = MyHomeScreen(animationController: animationController,userResponse:widget.userResponse ,);
+        duration: const Duration(milliseconds: 500), vsync: this);
+    tabBody = MyHomeScreen(animationController: animationController,userResponse:widget.userResponse);
     super.initState();
   }
 
