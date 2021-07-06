@@ -84,7 +84,7 @@ class _DrownsinessAppHomeScreenState extends State<DrownsinessAppHomeScreen>
           addClick: () {
             setState(() {
               tabBody =
-                  QRScreen(animationController: animationController);
+                  QRScreen(animationController: animationController, userResponse: widget.userResponse,);
             });
           },
           changeIndex: (int index) {
@@ -105,7 +105,7 @@ class _DrownsinessAppHomeScreenState extends State<DrownsinessAppHomeScreen>
                 }
                 setState(() {
                   tabBody =
-                      QRScreen(animationController: animationController);
+                      QRScreen(animationController: animationController, userResponse: widget.userResponse,);
                 });
               });
             } else if (index == 3) {

@@ -1,3 +1,4 @@
+import 'package:flutter_drownsi/home_ui/drownsiness_app/models/UserResponseData.dart';
 import 'package:flutter_drownsi/home_ui/drownsiness_app/ui_view/title_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -9,8 +10,9 @@ import 'buttonQR_view.dart';
 import 'logout_button_view.dart';
 
 class QRScreen extends StatefulWidget {
-  const QRScreen({Key? key, required this.animationController}) : super(key: key);
+  const QRScreen({Key? key, required this.animationController, required this.userResponse}) : super(key: key);
 
+  final UserResponse userResponse;
   final AnimationController animationController;
   @override
   _QRScreenState createState() => _QRScreenState();
@@ -58,137 +60,520 @@ class _QRScreenState extends State<QRScreen>
   }
 
   void addAllListData() {
-    const int count = 5;
-    listViews.add(
-      ButtonQR(
-        animation: Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
-            parent: widget.animationController,
-            curve:
-            Interval((1 / count) * 1, 1.0, curve: Curves.fastOutSlowIn))),
-        animationController: widget.animationController,
-        button1: FlatButton(onPressed: () =>{
-          qrData = "turn on device",
-          showDialog(context: context, builder: (context){
-            return Dialog(
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
-              elevation: 16,
-              child: Container(
-                height: 300,
-                width: 260,
-                child: Column(
-                  children: [
-                    QrImage(data: qrData, padding: const EdgeInsets.only(top: 20,left: 20,right: 20,bottom: 20)),
-                  ],
-                ),
-              ),
-            );
-          })
-        },
-          color: HexColor("#2ad921"),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Icon(Icons.subdirectory_arrow_left, color: Colors.white,),
-              Text('Turn on device',textAlign: TextAlign.left, style: TextStyle(color: Colors.white),)
-            ],
-          ),
-        ),
-        button2: FlatButton(onPressed: () =>{
-          qrData = "turn off device",
-          showDialog(context: context, builder: (context){
-            return Dialog(
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
-              elevation: 16,
-              child: Container(
-                height: 300,
-                width: 260,
-                child: Column(
-                  children: [
-                    QrImage(data: qrData, padding: const EdgeInsets.only(top: 20,left: 20,right: 20,bottom: 20)),
-                  ],
-                ),
-              ),
-            );
-          })
-        },
-          color: HexColor("#d94621"),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Icon(Icons.subdirectory_arrow_left, color: Colors.white,),
-              Text('Turn off device',textAlign: TextAlign.left, style: TextStyle(color: Colors.white),)
-            ],
-          ),
-        ),
+    const int count = 9;
+    final ButtonStyle raisedButtonStyleRed = ElevatedButton.styleFrom(
+      onPrimary: Colors.black87,
+      primary: Colors.white,
+      minimumSize: Size(88, 36),
+      padding: EdgeInsets.symmetric(horizontal: 16),
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(10)),
+          side: BorderSide(color: Colors.red)
+      ),
+    );
+    final ButtonStyle raisedButtonStyle = ElevatedButton.styleFrom(
+      onPrimary: Colors.black87,
+      primary: Colors.white,
+      minimumSize: Size(88, 36),
+      padding: EdgeInsets.symmetric(horizontal: 16),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(10)),
+        side: BorderSide(color: Colors.green)
       ),
     );
     listViews.add(
-      ButtonQR(
-        animation: Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
-            parent: widget.animationController,
-            curve:
-            Interval((1 / count) * 1, 1.0, curve: Curves.fastOutSlowIn))),
-        animationController: widget.animationController,
-        button1: FlatButton(onPressed: ()=>{
-          qrData = "turn on device",
-          showDialog(context: context, builder: (context){
-            return Dialog(
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
-              elevation: 16,
-              child: Container(
-                height: 300,
-                width: 260,
-                child: Column(
-                  children: [
-                    QrImage(data: qrData, padding: const EdgeInsets.only(top: 20,left: 20,right: 20,bottom: 20)),
-                  ],
-                ),
-              ),
-            );
-          })
-        },
-          color: HexColor("#2ad921"),
+        Padding(
+            padding: EdgeInsets.only(left: 50, top: 25),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Icon(Icons.subdirectory_arrow_left, color: Colors.white,),
-              Text('Turn on device',textAlign: TextAlign.left, style: TextStyle(color: Colors.white),)
-            ],
-          ),
-        ),
-        button2: FlatButton(onPressed: ()=>{
-          qrData = "turn off device",
-          showDialog(context: context, builder: (context){
-            return Dialog(
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
-              elevation: 16,
-              child: Container(
-                height: 300,
-                width: 260,
-                child: Column(
-                  children: [
-                    QrImage(data: qrData, padding: const EdgeInsets.only(top: 20,left: 20,right: 20,bottom: 20)),
-                  ],
+              Container(
+                width: 140,
+                height: 170,
+                child: ElevatedButton(
+                    style: raisedButtonStyle,
+                    onPressed: () {
+                      String qrData = "connect_" + widget.userResponse.userId + '_' + widget.userResponse.username;
+                      showDialog(context: context, builder: (context) {
+                        return Dialog(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30)),
+                          elevation: 16,
+                          child: Container(
+                            height: 400,
+                            width: 300,
+                            child: Column(
+                              children: [
+                                QrImage(data: qrData,
+                                    padding: const EdgeInsets.only(
+                                        top: 20,
+                                        left: 20,
+                                        right: 20,
+                                        bottom: 20)),
+                                Center(
+                                  child: RichText(
+                                    text: TextSpan(
+                                        children: <TextSpan>[
+                                          TextSpan(text: 'Scan QR code to ',
+                                              style: TextStyle(
+                                                  color: Colors.black)),
+                                          TextSpan(text: 'connect',
+                                              style: TextStyle(
+                                                  color: Colors.green)),
+                                          TextSpan(text: ' to device',
+                                              style: TextStyle(
+                                                  color: Colors.black)),
+                                          TextSpan(text: '\nUser: ',
+                                              style: TextStyle(
+                                                  color: Colors.black)),
+                                          TextSpan(text: widget.userResponse.username,
+                                              style: TextStyle(
+                                                  color: Colors.green)),
+                                        ]
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(height: 5,),
+                                Image(
+                                  image: AssetImage(
+                                      "assets/images/qr_icon.png"),
+                                  width: 50.0,
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      });
+                    },
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Image.asset('assets/images/link_device.png', width: 100.0,),
+                        Divider(
+                          height: 5,
+                          thickness: 1,
+                          indent: 5,
+                          endIndent: 5,
+                          color: Colors.green,
+                        ),
+                        Text(
+                          'Link device',
+                          style: TextStyle(
+                            fontSize: 9,
+                          ),
+                        )
+                      ],
+                    )
                 ),
               ),
-            );
-          })
-        },
-          color: HexColor("#d94621"),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Icon(Icons.subdirectory_arrow_left, color: Colors.white,),
-              Text('Turn off device',textAlign: TextAlign.left, style: TextStyle(color: Colors.white),)
+              SizedBox(width: 30),
+              Container(
+                width: 140,
+                height: 170,
+                child: ElevatedButton(
+                    style: raisedButtonStyle,
+                    onPressed: () {
+                      String qrData = "upload_" + widget.userResponse.userId + '_' + widget.userResponse.username;
+                      showDialog(context: context, builder: (context) {
+                        return Dialog(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30)),
+                          elevation: 16,
+                          child: Container(
+                            height: 400,
+                            width: 300,
+                            child: Column(
+                              children: [
+                                QrImage(data: qrData,
+                                    padding: const EdgeInsets.only(
+                                        top: 20,
+                                        left: 20,
+                                        right: 20,
+                                        bottom: 20)),
+                                Center(
+                                  child: RichText(
+                                    text: TextSpan(
+                                        children: <TextSpan>[
+                                          TextSpan(text: 'Scan QR code to ',
+                                              style: TextStyle(
+                                                  color: Colors.black)),
+                                          TextSpan(text: 'upload',
+                                              style: TextStyle(
+                                                  color: Colors.green)),
+                                          TextSpan(text: ' \ntraking data from device',
+                                              style: TextStyle(
+                                                  color: Colors.black)),
+                                        ]
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(height: 5,),
+                                Image(
+                                  image: AssetImage(
+                                      "assets/images/qr_icon.png"),
+                                  width: 50.0,
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      });
+                    },
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Image.asset('assets/images/cloud.png', width: 100.0,),
+                        Divider(
+                          height: 5,
+                          thickness: 1,
+                          indent: 5,
+                          endIndent: 5,
+                          color: Colors.green,
+                        ),
+                        Text(
+                          'Upload tracking data',
+                          style: TextStyle(
+                            fontSize: 9,
+                          ),
+                        )
+                      ],
+                    )
+                ),
+              )
             ],
           ),
-        ),
-      ),
+        )
+    );
+    listViews.add(
+        Padding(
+          padding: EdgeInsets.only(left: 50, top: 25),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: 140,
+                height: 170,
+                child: ElevatedButton(
+                    style: raisedButtonStyle,
+                    onPressed: () {
+                      String qrData = "activate";
+                      showDialog(context: context, builder: (context) {
+                        return Dialog(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30)),
+                          elevation: 16,
+                          child: Container(
+                            height: 400,
+                            width: 300,
+                            child: Column(
+                              children: [
+                                QrImage(data: qrData,
+                                    padding: const EdgeInsets.only(
+                                        top: 20,
+                                        left: 20,
+                                        right: 20,
+                                        bottom: 20)),
+                                Center(
+                                  child: RichText(
+                                    text: TextSpan(
+                                        children: <TextSpan>[
+                                          TextSpan(text: 'Scan QR code to ',
+                                              style: TextStyle(
+                                                  color: Colors.black)),
+                                          TextSpan(text: 'turn on',
+                                              style: TextStyle(
+                                                  color: Colors.green)),
+                                          TextSpan(text: ' detection \nfeature on device',
+                                              style: TextStyle(
+                                                  color: Colors.black)),
+                                        ]
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(height: 5,),
+                                Image(
+                                  image: AssetImage(
+                                      "assets/images/qr_icon.png"),
+                                  width: 50.0,
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      });
+                    },
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Image.asset('assets/images/turn on.png', width: 100.0,),
+                        SizedBox(height: 35),
+                        Divider(
+                          height: 5,
+                          thickness: 1,
+                          indent: 5,
+                          endIndent: 5,
+                          color: Colors.green,
+                        ),
+                        Text(
+                          'Turn on detection',
+                          style: TextStyle(
+                            fontSize: 9,
+                          ),
+                        )
+                      ],
+                    )
+                ),
+              ),
+              SizedBox(width: 30),
+              Container(
+                width: 140,
+                height: 170,
+                child: ElevatedButton(
+                    style: raisedButtonStyleRed,
+                    onPressed: () {
+                      String qrData = "deactivate";
+                      showDialog(context: context, builder: (context) {
+                        return Dialog(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30)),
+                          elevation: 16,
+                          child: Container(
+                            height: 400,
+                            width: 300,
+                            child: Column(
+                              children: [
+                                QrImage(data: qrData,
+                                    padding: const EdgeInsets.only(
+                                        top: 20,
+                                        left: 20,
+                                        right: 20,
+                                        bottom: 20)),
+                                Center(
+                                  child: RichText(
+                                    text: TextSpan(
+                                        children: <TextSpan>[
+                                          TextSpan(text: 'Scan QR code to ',
+                                              style: TextStyle(
+                                                  color: Colors.black)),
+                                          TextSpan(text: 'turn off',
+                                              style: TextStyle(
+                                                  color: Colors.red)),
+                                          TextSpan(text: ' detection \nfeature on device',
+                                              style: TextStyle(
+
+                                                  color: Colors.black)),
+                                        ]
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(height: 5,),
+                                Image(
+                                  image: AssetImage(
+                                      "assets/images/qr_icon.png"),
+                                  width: 50.0,
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      });
+                    },
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Image.asset('assets/images/turn off.png', width: 100.0,),
+                        SizedBox(height: 35),
+                        Divider(
+                          height: 5,
+                          thickness: 1,
+                          indent: 5,
+                          endIndent: 5,
+                          color: Colors.red,
+                        ),
+                        Text(
+                          'Turn on detection',
+                          style: TextStyle(
+                            fontSize: 9,
+                          ),
+                        )
+                      ],
+                    )
+                ),
+              ),
+            ],
+          ),
+        )
+    );
+    listViews.add(
+        Padding(
+          padding: EdgeInsets.only(left: 50, top: 25),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: 140,
+                height: 170,
+                child: ElevatedButton(
+                    style: raisedButtonStyle,
+                    onPressed: () {
+                      String qrData = "update";
+                      showDialog(context: context, builder: (context) {
+                        return Dialog(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30)),
+                          elevation: 16,
+                          child: Container(
+                            height: 400,
+                            width: 300,
+                            child: Column(
+                              children: [
+                                QrImage(data: qrData,
+                                    padding: const EdgeInsets.only(
+                                        top: 20,
+                                        left: 20,
+                                        right: 20,
+                                        bottom: 20)),
+                                Center(
+                                  child: RichText(
+                                    text: TextSpan(
+                                        children: <TextSpan>[
+                                          TextSpan(text: 'Scan QR code to ',
+                                              style: TextStyle(
+                                                  color: Colors.black)),
+                                          TextSpan(text: 'get update',
+                                              style: TextStyle(
+                                                  color: Colors.green)),
+                                          TextSpan(text: ' firmware on device',
+                                              style: TextStyle(
+                                                  color: Colors.black)),
+                                        ]
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(height: 5,),
+                                Image(
+                                  image: AssetImage(
+                                      "assets/images/qr_icon.png"),
+                                  width: 50.0,
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      });
+                    },
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Image.asset('assets/images/update.png', width: 100.0,),
+                        Divider(
+                          height: 5,
+                          thickness: 1,
+                          indent: 5,
+                          endIndent: 5,
+                          color: Colors.green,
+                        ),
+                        Text(
+                          'Get update',
+                          style: TextStyle(
+                            fontSize: 9,
+                          ),
+                        )
+                      ],
+                    )
+                ),
+              ),
+              SizedBox(width: 30),
+              Container(
+                width: 140,
+                height: 170,
+                child: ElevatedButton(
+                    style: raisedButtonStyleRed,
+                    onPressed: () {
+                      String qrData = "shutdown";
+                      showDialog(context: context, builder: (context) {
+                        return Dialog(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30)),
+                          elevation: 16,
+                          child: Container(
+                            height: 400,
+                            width: 300,
+                            child: Column(
+                              children: [
+                                QrImage(data: qrData,
+                                    padding: const EdgeInsets.only(
+                                        top: 20,
+                                        left: 20,
+                                        right: 20,
+                                        bottom: 20)),
+                                Center(
+                                  child: RichText(
+                                    text: TextSpan(
+                                        children: <TextSpan>[
+                                          TextSpan(text: 'Scan QR code to ',
+                                              style: TextStyle(
+                                                  color: Colors.black)),
+                                          TextSpan(text: 'shut down',
+                                              style: TextStyle(
+                                                  color: Colors.red)),
+                                          TextSpan(text: ' device',
+                                              style: TextStyle(
+                                                  color: Colors.black)),
+                                        ]
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(height: 5,),
+                                Image(
+                                  image: AssetImage(
+                                      "assets/images/qr_icon.png"),
+                                  width: 50.0,
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      });
+                    },
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Image.asset('assets/images/shutdown.png', width: 100.0,),
+                        Divider(
+                          height: 5,
+                          thickness: 1,
+                          indent: 5,
+                          endIndent: 5,
+                          color: Colors.red,
+                        ),
+                        Text(
+                          'Shutdown device',
+                          style: TextStyle(
+                            fontSize: 9,
+                          ),
+                        )
+                      ],
+                    )
+                ),
+              ),
+            ],
+          ),
+        )
     );
   }
 
   Future<bool> getData() async {
-    await Future<dynamic>.delayed(const Duration(milliseconds: 50));
+    await Future<dynamic>.delayed(const Duration(milliseconds: 100));
     return true;
   }
   String qrData="https://github.com/ChinmayMunje";
@@ -224,7 +609,7 @@ class _QRScreenState extends State<QRScreen>
             padding: EdgeInsets.only(
               top: AppBar().preferredSize.height +
                   MediaQuery.of(context).padding.top +
-                  39,
+                  90,
               bottom: 62 + MediaQuery.of(context).padding.bottom,
             ),
             itemCount: listViews.length,
@@ -281,16 +666,27 @@ class _QRScreenState extends State<QRScreen>
                             Expanded(
                               child: Padding(
                                 padding: const EdgeInsets.all(10.0),
-                                child: Text(
-                                  'Scan QR Code',
-                                  textAlign: TextAlign.left,
-                                  style: TextStyle(
-                                    fontFamily: FitnessAppTheme.fontName,
-                                    fontWeight: FontWeight.w700,
-                                    fontSize: 22 + 6 - 6 * topBarOpacity,
-                                    letterSpacing: 1.2,
-                                    color: FitnessAppTheme.darkerText,
-                                  ),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Image(
+                                      image: AssetImage("assets/images/qr_icon.png"),
+                                      width: 70.0,
+                                    ),
+                                    SizedBox(height: 5),
+                                    Text(
+                                      'Control detection kit by QR code',
+                                      style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                                    ),
+                                    Divider(
+                                      height: 5,
+                                      thickness: 1,
+                                      indent: 20,
+                                      endIndent: 20,
+                                      color: Colors.black12,
+                                    ),
+                                  ],
                                 ),
                               ),
                             ),

@@ -152,7 +152,7 @@ class MyTrackingHistoryWidget extends State<TrackingHistoryWidget> {
           color: Colors.black12,
         ),
       );
-      if(count == 3) {
+      if(count == 4) {
         listWidget.add(
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
