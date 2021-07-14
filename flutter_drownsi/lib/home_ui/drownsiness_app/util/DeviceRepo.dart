@@ -2,10 +2,10 @@ import 'dart:convert';
 
 import 'package:flutter_drownsi/home_ui/drownsiness_app/models/DataTrackingOnDevice.dart';
 import 'package:flutter_drownsi/home_ui/drownsiness_app/models/DeviceData.dart';
-import 'package:flutter_drownsi/home_ui/drownsiness_app/models/DrownsinessData.dart';
 import 'package:http/http.dart' as http;
 
 class DeviceRepo {
+
 
   Future<List<DataTrackingOnEachDevice>> getDataTrackingWithDevice(String userID, String token) async {
     final String baseUrl = "https://dhdev-drowsiness123.herokuapp.com/api/v1/data-trackings/users/$userID";

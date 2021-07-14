@@ -64,7 +64,7 @@ class _MyHomeScreenState extends State<MyHomeScreen>
 
     x.add(
       TitleView(
-        titleTxt: 'Connected Device',
+        titleTxt: 'My Connected Device',
         subTxt: '',
         animation: Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
             parent: widget.animationController,
@@ -87,7 +87,7 @@ class _MyHomeScreenState extends State<MyHomeScreen>
 
     x.add(
       TitleView(
-        titleTxt: 'Tracking History',
+        titleTxt: 'My Tracking History',
         subTxt: '',
         animation: Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
             parent: widget.animationController,

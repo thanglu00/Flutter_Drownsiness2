@@ -65,7 +65,6 @@ class _LoginPageState extends State<LoginPage> {
 
                               if(check) {
                                 print(check);
-                                print("Login success");
                                 Navigator.pushAndRemoveUntil(
                                     context,
                                     MaterialPageRoute(

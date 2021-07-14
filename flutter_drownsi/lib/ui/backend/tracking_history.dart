@@ -31,10 +31,33 @@ class MyTrackingHistoryWidget extends State<TrackingHistoryWidget> {
   @override
   void initState() {
     super.initState();
-    listWidgets.add(Padding(
-      padding: EdgeInsets.all(15.0),
-      child: Text('No record!', style: TextStyle(color: Colors.red)),
-    ));
+    listWidgets.add(
+        Padding(
+          padding: EdgeInsets.all(25),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(
+                child: CircularProgressIndicator(
+                  color: Colors.green,
+                ),
+                height: 20,
+                width: 20,
+              ),
+              SizedBox(width: 15),
+              Text(
+                  'Please wait...',
+                  style: TextStyle(
+                      color: Colors.green,
+                      fontSize: 12
+                  )
+              ),
+              SizedBox(width: 60),
+            ],
+          ),
+        )
+    );
     dataRepo
         .getByUserId(widget.userResponse1.userId, widget.userResponse1.token)
         .then((value) {
@@ -45,7 +68,23 @@ class MyTrackingHistoryWidget extends State<TrackingHistoryWidget> {
             listWidgets = <Widget>[];
             listWidgets = createWidget(listData!);
           });
+        } else {
+          setState(() {
+            listWidgets = <Widget>[];
+            listWidgets.add(Padding(
+              padding: EdgeInsets.all(15.0),
+              child: Text('No record!', style: TextStyle(color: Colors.red)),
+            ));
+          });
         }
+      } else {
+        setState(() {
+          listWidgets = <Widget>[];
+          listWidgets.add(Padding(
+            padding: EdgeInsets.all(15.0),
+            child: Text('No record!', style: TextStyle(color: Colors.red)),
+          ));
+        });
       }
     });
   }
@@ -164,13 +203,6 @@ class MyTrackingHistoryWidget extends State<TrackingHistoryWidget> {
                   },
                   child: Row(
                     children: [
-                      Text(
-                        'More',
-                        style: TextStyle(
-                          color: Colors.green,
-                          fontSize: 12,
-                        ),
-                      ),
                       Icon(
                         Icons.arrow_forward_ios,
                         color: Colors.green,

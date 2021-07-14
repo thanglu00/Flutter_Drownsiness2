@@ -33,18 +33,59 @@ class FullHistoryState extends State<FullHistory> with TickerProviderStateMixin{
   @override
   void initState() {
     super.initState();
-    listWidgets.add(Padding(
-      padding: EdgeInsets.all(15.0),
-      child: Text('No record!', style: TextStyle(color: Colors.red)),
-    ));
+    listWidgets.add(
+        Padding(
+          padding: EdgeInsets.all(25),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(
+                child: CircularProgressIndicator(
+                  color: Colors.green,
+                ),
+                height: 20,
+                width: 20,
+              ),
+              SizedBox(width: 15),
+              Text(
+                  'Please wait...',
+                  style: TextStyle(
+                      color: Colors.green,
+                      fontSize: 12
+                  )
+              ),
+              SizedBox(width: 60),
+            ],
+          ),
+        )
+    );
     dataRepo
         .getByUserId(widget.userResponse.userId, widget.userResponse.token)
         .then((value) {
       if (value != null) {
+        if(value.isNotEmpty) {
+          setState(() {
+            listData = value;
+            listWidgets = <Widget>[];
+            listWidgets = createWidget(listData!);
+          });
+        } else {
+          setState(() {
+            listWidgets = <Widget>[];
+            listWidgets.add(Padding(
+              padding: EdgeInsets.all(15.0),
+              child: Text('No record!', style: TextStyle(color: Colors.red)),
+            ));
+          });
+        }
+      } else {
         setState(() {
-          listData = value;
           listWidgets = <Widget>[];
-          listWidgets = createWidget(listData!);
+          listWidgets.add(Padding(
+            padding: EdgeInsets.all(15.0),
+            child: Text('No record!', style: TextStyle(color: Colors.red)),
+          ));
         });
       }
     });

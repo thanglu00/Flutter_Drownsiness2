@@ -1,8 +1,11 @@
 import 'package:flutter_drownsi/home_ui/drownsiness_app/drownsiness_app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_drownsi/home_ui/drownsiness_app/models/DrownsinessData.dart';
+import 'package:flutter_drownsi/home_ui/drownsiness_app/models/FirmwareData.dart';
 import 'package:flutter_drownsi/home_ui/drownsiness_app/models/UserDevice.dart';
 import 'package:flutter_drownsi/home_ui/drownsiness_app/models/UserResponseData.dart';
+import 'package:flutter_drownsi/home_ui/drownsiness_app/ui_view/full_connect_history.dart';
+import 'package:flutter_drownsi/home_ui/drownsiness_app/ui_view/full_device_detail.dart';
 import 'package:flutter_drownsi/home_ui/drownsiness_app/ui_view/trackingDetail_view.dart';
 import 'package:flutter_drownsi/home_ui/drownsiness_app/util/UserDeviceRepo.dart';
 import 'package:flutter_drownsi/ui/utils/MyTools.dart';
@@ -26,19 +29,30 @@ class LinkedDeviceWidget extends StatefulWidget {
 class MyLinkedDeviceWidget extends State<LinkedDeviceWidget> {
 
   UserDeviceRepo userDeviceRepo = new UserDeviceRepo();
-  UserDevice userDeviceDTO = new UserDevice("null", 0, 0);
+  UserDevice userDeviceDTO = new UserDevice("null", "null", 0, 0, new Firmware('null', 'null', 'null', 0, 0));
+  String checkUpdate = '';
 
   @override
   void initState() {
     super.initState();
+
     userDeviceRepo.getCurrentConnect(
         widget.userResponse1.userId, widget.userResponse1.token)
         .then((value) {
-      if (value != null) {
-        setState(() {
-          userDeviceDTO = value;
-        });
-      }
+      userDeviceRepo.getLastestFirmware(widget.userResponse1.token).then((fw) {
+        if (value != null) {
+          setState(() {
+            if (fw!.createdAt > value.firmware.createdAt) {
+              checkUpdate = "Old version";
+            }
+            userDeviceDTO = value;
+          });
+        } else {
+          setState(() {
+            userDeviceDTO = new UserDevice("null", "nulled", 0, 0, new Firmware('null', 'null', 'null', 0, 0));
+          });
+        }
+      });
     });
   }
 
@@ -71,17 +85,46 @@ class MyLinkedDeviceWidget extends State<LinkedDeviceWidget> {
                     Row(
                       children: [
                         SizedBox(width: 5),
-                        Container(
-                          height: 60,
-                          width: 60,
-                          decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              image: DecorationImage(
-                                image: AssetImage(
-                                    'assets/images/link_device.png'),
-                              )
-                          ),
+                        (userDeviceDTO.deviceName == 'null' || userDeviceDTO.deviceName == 'nulled') ?
+                        SizedBox(width: 70, height: 50,) :
+                        TextButton(
+                            onPressed: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => FullConnectHistory(
+                                        userResponse: widget.userResponse1,
+                                      )));
+                            },
+                            child: Column(
+                              children: [
+                                Icon(
+                                  Icons.history,
+                                  color: Colors.grey,
+                                  size: 30.0,
+                                  semanticLabel: 'Text to announce in accessibility modes',
+                                ),
+                                Text(
+                                  'History',
+                                  style: TextStyle(
+                                    color: Colors.grey,
+                                    fontSize: 7,
+                                  ),
+                                )
+                              ],
+                            )
                         ),
+                        // Container(
+                        //   height: 60,
+                        //   width: 60,
+                        //   decoration: BoxDecoration(
+                        //       shape: BoxShape.circle,
+                        //       image: DecorationImage(
+                        //         image: AssetImage(
+                        //             'assets/images/link_device.png'),
+                        //       )
+                        //   ),
+                        // ),
                         const SizedBox(width: 20.0),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.start,
@@ -89,8 +132,34 @@ class MyLinkedDeviceWidget extends State<LinkedDeviceWidget> {
                           children: [
                             // ignore: unnecessary_null_comparison
                             userDeviceDTO.deviceName == 'null' ?
-                            Text('No connected device!',
-                              style: TextStyle(color: Colors.red),) :
+                            Row(
+                              children: [
+                                SizedBox(
+                                  child: CircularProgressIndicator(
+                                    color: Colors.green,
+                                  ),
+                                  height: 20,
+                                  width: 20,
+                                ),
+                                SizedBox(width: 15),
+                                Text(
+                                  'Please wait...',
+                                  style: TextStyle(
+                                      color: Colors.green,
+                                      fontSize: 12
+                                  )
+                                ),
+                                SizedBox(width: 60),
+                              ],
+                            ) :
+                            userDeviceDTO.deviceName == 'nulled' ?
+                            Text(
+                              'Not connect any device yet!',
+                              style: TextStyle(
+                                color: Colors.red,
+                                fontSize: 12
+                              ),
+                            ) :
                             Column(
                               mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -105,21 +174,16 @@ class MyLinkedDeviceWidget extends State<LinkedDeviceWidget> {
                                 Row(
                                   children: [
                                     Text(
-                                      'Version: 1.1',
+                                      'Firmware: ' + (userDeviceDTO.firmware.createdAt / 1000).round().toString(),
                                       style: TextStyle(fontSize: 10),
                                     ),
                                     const SizedBox(width: 10.0),
-                                    InkWell(
-                                        child: Text(
-                                            'Check for Update',
+                                    Text(
+                                            checkUpdate,
                                           style: TextStyle(
-                                              fontSize: 10,
-                                            color: Colors.green,
+                                              fontSize: 7,
+                                            color: Colors.red,
                                           ),
-                                        ),
-                                        onTap: () {
-
-                                        },
                                     ),
                                   ],
                                 )
@@ -128,25 +192,25 @@ class MyLinkedDeviceWidget extends State<LinkedDeviceWidget> {
                           ],
                         ),
                         const SizedBox(width: 10.0),
+                        (userDeviceDTO.deviceName == 'null' || userDeviceDTO.deviceName == 'nulled') ?
+                        SizedBox(width: 30) :
                         TextButton(
                             onPressed: () {
-
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => FullDeviceDetail(
+                                        userResponse: widget.userResponse1, userDevice: userDeviceDTO,
+                                      )));
                             },
                             child: Column(
                               children: [
                                 Icon(
-                                  Icons.history,
-                                  color: Colors.grey,
-                                  size: 26.0,
+                                  Icons.navigate_next,
+                                  color: Colors.green,
+                                  size: 35.0,
                                   semanticLabel: 'Text to announce in accessibility modes',
                                 ),
-                                Text(
-                                  'History',
-                                  style: TextStyle(
-                                    color: Colors.grey,
-                                    fontSize: 7,
-                                  ),
-                                )
                               ],
                             )
                         )
@@ -159,78 +223,95 @@ class MyLinkedDeviceWidget extends State<LinkedDeviceWidget> {
                       endIndent: 20,
                       color: Colors.grey,
                     ),
-                    Center(
-                        child: TextButton(
-                          onPressed: () {
-                            String qrData = "connect_" + widget.userResponse1.userId + '_' + widget.userResponse1.username;
-                            showDialog(context: context, builder: (context) {
-                              return Dialog(
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(30)),
-                                elevation: 16,
-                                child: Container(
-                                  height: 400,
-                                  width: 300,
-                                  child: Column(
-                                    children: [
-                                      QrImage(data: qrData,
-                                          padding: const EdgeInsets.only(
-                                              top: 20,
-                                              left: 20,
-                                              right: 20,
-                                              bottom: 20)),
-                                      Center(
-                                        child: RichText(
-                                          text: TextSpan(
-                                              children: <TextSpan>[
-                                                TextSpan(text: 'Scan QR code to ',
-                                                    style: TextStyle(
-                                                        color: Colors.black)),
-                                                TextSpan(text: 'connect',
-                                                    style: TextStyle(
-                                                        color: Colors.green)),
-                                                TextSpan(text: ' to device',
-                                                    style: TextStyle(
-                                                        color: Colors.black)),
-                                                TextSpan(text: '\nUser: ',
-                                                    style: TextStyle(
-                                                        color: Colors.black)),
-                                                TextSpan(text: widget.userResponse1.username,
-                                                    style: TextStyle(
-                                                        color: Colors.green)),
-                                              ]
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Center(
+                            child: TextButton(
+                              onPressed: () {
+                                String qrData = "connect_" + widget.userResponse1.userId + '_' + widget.userResponse1.username;
+                                showDialog(context: context, builder: (context) {
+                                  return Dialog(
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(30)),
+                                    elevation: 16,
+                                    child: Container(
+                                      height: 400,
+                                      width: 300,
+                                      child: Column(
+                                        children: [
+                                          QrImage(data: qrData,
+                                              padding: const EdgeInsets.only(
+                                                  top: 20,
+                                                  left: 20,
+                                                  right: 20,
+                                                  bottom: 20)),
+                                          Center(
+                                            child: RichText(
+                                              text: TextSpan(
+                                                  children: <TextSpan>[
+                                                    TextSpan(text: 'Scan QR code to ',
+                                                        style: TextStyle(
+                                                            color: Colors.black)),
+                                                    TextSpan(text: 'connect',
+                                                        style: TextStyle(
+                                                            color: Colors.green)),
+                                                    TextSpan(text: ' to device',
+                                                        style: TextStyle(
+                                                            color: Colors.black)),
+                                                    TextSpan(text: '\nUser: ',
+                                                        style: TextStyle(
+                                                            color: Colors.black)),
+                                                    TextSpan(text: widget.userResponse1.username,
+                                                        style: TextStyle(
+                                                            color: Colors.green)),
+                                                  ]
+                                              ),
+                                            ),
                                           ),
-                                        ),
+                                          SizedBox(height: 5,),
+                                          Image(
+                                            image: AssetImage(
+                                                "assets/images/qr_icon.png"),
+                                            width: 50.0,
+                                          ),
+                                        ],
                                       ),
-                                      SizedBox(height: 5,),
-                                      Image(
-                                        image: AssetImage(
-                                            "assets/images/qr_icon.png"),
-                                        width: 50.0,
-                                      ),
-                                    ],
+                                    ),
+                                  );
+                                });
+                              },
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.add,
+                                    color: Colors.green,
+                                    size: 24.0,
+                                    semanticLabel: 'Text to announce in accessibility modes',
                                   ),
-                                ),
-                              );
-                            });
-                          },
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.add,
-                                color: Colors.green,
-                                size: 24.0,
-                                semanticLabel: 'Text to announce in accessibility modes',
+                                  Text('Connect device', style: TextStyle(
+                                    color: Colors.green,
+                                    fontSize: 13,
+                                  ),)
+                                ],
                               ),
-                              Text('Connect device', style: TextStyle(
-                                color: Colors.green,
-                                fontSize: 13,
-                              ),)
-                            ],
-                          ),
-                        )
+                            )
+                        ),
+                        // const SizedBox(
+                        //   width: 1.0,
+                        //   height: 20.0,
+                        //   child: const DecoratedBox(
+                        //     decoration: const BoxDecoration(
+                        //         color: Colors.grey
+                        //     ),
+                        //   ),
+                        // ),
+                        //History button
+
+                      ],
                     )
                   ],
                 ),

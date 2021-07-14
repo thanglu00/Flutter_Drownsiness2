@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_drownsi/home_ui/drownsiness_app/models/DataTrackingDTO.dart';
 import 'package:flutter_drownsi/home_ui/drownsiness_app/models/UserResponseData.dart';
+import 'package:flutter_drownsi/home_ui/drownsiness_app/ui_view/full_history.dart';
 import 'package:flutter_drownsi/home_ui/drownsiness_app/util/DataTrackingRepo.dart';
 import 'package:flutter_drownsi/ui/utils/MyTools.dart';
 
@@ -235,6 +236,9 @@ class TrackingDetailsState extends State<TrackingDetails> {
             await Future<dynamic>.delayed(const Duration(milliseconds: 2000));
             Navigator.pop(context);
             Navigator.pop(context);
+            Navigator.pushReplacement(context,
+                MaterialPageRoute(builder: (context)=> FullHistory(userResponse: widget.userResponse)));
+            return Future.value(false);
           },
         ),
       ],
