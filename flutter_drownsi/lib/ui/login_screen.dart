@@ -5,9 +5,7 @@ import 'package:flutter_drownsi/home_ui/drownsiness_app/drownsiness_app_controll
 import 'package:flutter_drownsi/home_ui/drownsiness_app/models/UserPostData.dart';
 import 'package:flutter_drownsi/home_ui/drownsiness_app/models/UserResponseData.dart';
 import 'package:flutter_drownsi/home_ui/drownsiness_app/util/UserRepo.dart';
-import 'package:flutter_drownsi/ui/otp_screen.dart';
 import 'package:flutter_drownsi/ui/turnOnDevice_screen.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -114,7 +112,38 @@ class _LoginPageState extends State<LoginPage> {
       await UserRepo().getAuthoLogin(p).then((value){
         _response = value;
       });
-      Navigator.of(context,rootNavigator: true).pop();//close the dialoge
+      Navigator.of(context,rootNavigator: true).pop();
+      if (!_response.active) {
+        AuthClass().signOut();
+        showDialog(context: context, builder: (context){
+          return Dialog(
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+            elevation: 16,
+            child: Container(
+              height: 300,
+              width: 200,
+              child: Column(
+                children: [
+                  SizedBox(height: 40),
+                  Image(
+                    image: AssetImage("assets/images/deactive.png"),
+                    width: 150.0,
+                  ),
+                  SizedBox(height: 50),
+                  RichText(
+                    text: TextSpan(
+                        children: <TextSpan>[
+                          TextSpan(text: 'Login failed! Your account is not active.', style: TextStyle(color: Colors.red)),
+                        ]
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        });
+      }
+
     }catch(error){
       print(error);
     }

@@ -10,9 +10,12 @@ class UserDevice {
   late bool connected;
   late String deviceId;
 
+  String serialId = 'null';
+  bool active = false;
+
   late Firmware firmware;
 
-  UserDevice(this.deviceId, this.deviceName, this.createdAt, this.updatedAt, this.firmware);
+  UserDevice(this.deviceId, this.deviceName, this.createdAt, this.updatedAt, this.firmware, this.serialId, this.active);
   UserDevice.history(this.deviceId, this.deviceName, this.createdAt, this.connectedAt, this.disconnectedAt, this.connected);
 
   static UserDevice fromJson(Map<dynamic, dynamic> json) {
@@ -22,6 +25,8 @@ class UserDevice {
       json["createdAt"],
       json["updatedAt"],
       json["firmware"],
+      json["serialId"],
+      json["active"],
     );
   }
 
@@ -31,6 +36,8 @@ class UserDevice {
     this.createdAt = o["createdAt"];
     this.updatedAt = o["updatedAt"];
     this.firmware = Firmware.fromJson(o["firmware"]);
+    this.serialId = o['serialId'];
+    this.active = o['active'];
   }
 
   static UserDevice fromJson2(Map<dynamic, dynamic> json) {

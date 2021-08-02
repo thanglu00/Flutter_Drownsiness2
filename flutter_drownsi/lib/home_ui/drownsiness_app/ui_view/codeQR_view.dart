@@ -1,13 +1,8 @@
 import 'package:flutter_drownsi/home_ui/drownsiness_app/models/UserResponseData.dart';
-import 'package:flutter_drownsi/home_ui/drownsiness_app/ui_view/title_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
-
-import 'package:flutter_drownsi/main.dart';
 import '../drownsiness_app_theme.dart';
-import 'buttonQR_view.dart';
-import 'logout_button_view.dart';
 
 class QRScreen extends StatefulWidget {
   const QRScreen({Key? key, required this.animationController, required this.userResponse}) : super(key: key);

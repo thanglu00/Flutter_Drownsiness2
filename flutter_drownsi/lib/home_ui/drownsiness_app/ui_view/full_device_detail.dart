@@ -4,8 +4,10 @@ import 'package:flutter_drownsi/home_ui/drownsiness_app/models/FirmwareData.dart
 import 'package:flutter_drownsi/home_ui/drownsiness_app/models/UserDevice.dart';
 import 'package:flutter_drownsi/home_ui/drownsiness_app/models/UserResponseData.dart';
 import 'package:flutter_drownsi/home_ui/drownsiness_app/ui_view/title_view.dart';
+import 'package:flutter_drownsi/home_ui/drownsiness_app/util/DeviceRepo.dart';
 import 'package:flutter_drownsi/home_ui/drownsiness_app/util/UserDeviceRepo.dart';
 import 'package:flutter_drownsi/ui/utils/MyTools.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 
 import '../../../main.dart';
 
@@ -22,18 +24,23 @@ class FullDeviceDetail extends StatefulWidget {
 
 class FullDeviceDetailState extends State<FullDeviceDetail> with TickerProviderStateMixin{
 
-  TextEditingController nameController = new TextEditingController();
-  UserDeviceRepo userDeviceRepo = new UserDeviceRepo();
+  late TextEditingController nameController;
+  final UserDeviceRepo userDeviceRepo = new UserDeviceRepo();
+  final DeviceRepo deviceRepo = new DeviceRepo();
   bool _status = true;
   List<Widget> listWidgets = <Widget>[];
   late Firmware fw;
+  bool check = false;
 
   String checkUpdate = "none";
   bool isCheckUpdate = false;
+  late String newName;
 
   @override
   void initState() {
     super.initState();
+    newName = widget.userDevice.deviceName;
+    nameController = new TextEditingController(text: widget.userDevice.deviceName);
   }
 
   @override
@@ -120,7 +127,10 @@ class FullDeviceDetailState extends State<FullDeviceDetail> with TickerProviderS
                                             ),
                                             new Flexible(
                                               child: new TextField(
-                                                controller: nameController..text = widget.userDevice.deviceName,
+                                                onChanged: (value) {
+                                                  newName = value;
+                                                },
+                                                controller: nameController,
                                                 decoration: _status ? InputDecoration(
                                                   isDense: true,
                                                   contentPadding: EdgeInsets.zero,
@@ -289,7 +299,7 @@ class FullDeviceDetailState extends State<FullDeviceDetail> with TickerProviderS
                                                 });
                                               } else {
                                                 setState(() {
-                                                  fw = new Firmware('null', 'null', 'null', 0, 0);
+                                                  fw = new Firmware('null', 'null', 'null', 0, 0, false);
                                                   checkUpdate = "none";
                                                   isCheckUpdate = true;
                                                 });
@@ -340,10 +350,20 @@ class FullDeviceDetailState extends State<FullDeviceDetail> with TickerProviderS
                                         )
                                     ),
                                     checkUpdate != "none" ? SizedBox(width: 0) :
-                                    isCheckUpdate ? 
-                                      (fw.firmwareId != "null" ?
+                                    isCheckUpdate ?
+                                      ((fw.firmwareId != "null" && fw.firmwareId != widget.userDevice.firmware.firmwareId) ?
                                             Column(
                                               children: [
+                                                const Divider(
+                                                  height: 20,
+                                                  thickness: 1,
+                                                  indent: 20,
+                                                  endIndent: 20,
+                                                  color: Colors.grey,
+                                                ),
+                                                Center(
+                                                  child: Text('New version of Firmware!', style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
+                                                ),
                                                 Padding(
                                                     padding: EdgeInsets.only(
                                                         left: 5.0, top: 10.0),
@@ -430,6 +450,74 @@ class FullDeviceDetailState extends State<FullDeviceDetail> with TickerProviderS
 
                                                       ],
                                                     )),
+                                                Center(
+                                                    child: TextButton(
+                                                      onPressed: () {
+                                                        String qrData = "update";
+                                                        showDialog(context: context, builder: (context) {
+                                                          return Dialog(
+                                                            shape: RoundedRectangleBorder(
+                                                                borderRadius: BorderRadius.circular(30)),
+                                                            elevation: 16,
+                                                            child: Container(
+                                                              height: 400,
+                                                              width: 300,
+                                                              child: Column(
+                                                                children: [
+                                                                  QrImage(data: qrData,
+                                                                      padding: const EdgeInsets.only(
+                                                                          top: 20,
+                                                                          left: 20,
+                                                                          right: 20,
+                                                                          bottom: 20)),
+                                                                  Center(
+                                                                    child: RichText(
+                                                                      text: TextSpan(
+                                                                          children: <TextSpan>[
+                                                                            TextSpan(text: 'Scan QR code to ',
+                                                                                style: TextStyle(
+                                                                                    color: Colors.black)),
+                                                                            TextSpan(text: 'update',
+                                                                                style: TextStyle(
+                                                                                    color: Colors.green)),
+                                                                            TextSpan(text: ' new firmware \non device',
+                                                                                style: TextStyle(
+                                                                                    color: Colors.black)),
+                                                                          ]
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                  SizedBox(height: 5,),
+                                                                  Image(
+                                                                    image: AssetImage(
+                                                                        "assets/images/qr_icon.png"),
+                                                                    width: 50.0,
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          );
+                                                        });
+                                                      },
+                                                      child: Row(
+                                                        mainAxisAlignment: MainAxisAlignment.center,
+                                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                                        children: [
+                                                          Text('Create QR to Update', style: TextStyle(
+                                                            color: Colors.green,
+                                                            fontSize: 13,
+                                                          )),
+                                                          SizedBox(width: 10,),
+                                                          Icon(
+                                                            Icons.qr_code_scanner,
+                                                            color: Colors.green,
+                                                            size: 24.0,
+                                                            semanticLabel: 'Text to announce in accessibility modes',
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    )
+                                                )
                                               ],
                                             ) :
                                             Text('Your firmware is lastest!', style: TextStyle(color: Colors.green, fontSize: 14))) :
@@ -521,10 +609,249 @@ class FullDeviceDetailState extends State<FullDeviceDetail> with TickerProviderS
         ),
       ),
       onTap: () {
+        if(widget.userDevice.deviceName != newName && newName.length < 20 && newName.length > 3) {
+          showDialog(context: context, builder: (context) {
+            return Dialog(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30)),
+              elevation: 16,
+              child: Container(
+                height: 100,
+                width: 250,
+                child: Column(
+                  children: [
+                    Padding(
+                        padding: EdgeInsets.only(
+                            left: 25.0, top: 15.0),
+                        child: new Column(
+                          mainAxisSize: MainAxisSize.max,
+                          children: initDialog()
+                        )),
+                  ],
+                ),
+              ),
+            );
+          });
+        } else if (newName.length >= 20 || newName.length <= 3) {
+          showDialog(context: context, builder: (context) {
+            return Dialog(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30)),
+              elevation: 16,
+              child: Container(
+                height: 100,
+                width: 250,
+                child: Column(
+                  children: [
+                    Padding(
+                        padding: EdgeInsets.only(
+                            left: 25.0, top: 15.0),
+                        child: new Column(
+                            mainAxisSize: MainAxisSize.max,
+                            children: initDialog2()
+                        )),
+                  ],
+                ),
+              ),
+            );
+          });
+        }
         setState(() {
           _status = true;
         });
       },
     );
+  }
+
+  List<Widget> initDialog() {
+    listWidgets.clear();
+    listWidgets.add(Text(
+      'Would you like to rename device?',
+      style: TextStyle(color: Colors.black,),
+      textAlign: TextAlign.center,
+    ));
+    listWidgets.add(const Divider(
+          height: 5,
+          thickness: 1,
+          indent: 50,
+          endIndent: 50,
+          color: Colors.black12,
+        ));
+    listWidgets.add(Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        InkWell(
+          child:
+          Text(
+            "Cancel",
+            style: TextStyle(
+              decorationStyle: TextDecorationStyle.solid,
+              color: Colors.red,
+              fontSize:18,
+            ),
+          ),
+          onTap:() {
+            Navigator.pop(context);
+            setState(() {
+              newName = widget.userDevice.deviceName;
+              nameController = new TextEditingController(text: widget.userDevice.deviceName);
+            });
+          },
+        ),
+        SizedBox(width: 45),
+        InkWell(
+          child:
+          Text(
+            "OK",
+            style: TextStyle(
+              decorationStyle: TextDecorationStyle.solid,
+              color: Colors.green,
+              fontSize:18,
+            ),
+          ),
+          onTap:() async {
+            Navigator.pop(context);
+            showDialog(context: context, builder: (context){
+              return  Dialog (
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
+                elevation: 16,
+                child: Container(
+                  width: 200,
+                  height: 90,
+                  child: Column(
+                    children: getDeleteStateWidgets(),
+                  ),
+                ),
+              );
+            });
+            check = await deviceRepo.updateDeviceName(widget.userDevice.deviceId, widget.userResponse.token, newName);
+            if (check) {
+              setState(() {
+                widget.userDevice.deviceName = newName;
+              });
+            } else {
+              setState(() {
+                newName = widget.userDevice.deviceName;
+              });
+            }
+            showDialog(context: context, builder: (context){
+              return  Dialog (
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
+                elevation: 16,
+                child: Container(
+                  width: 200,
+                  height: 90,
+                  child: Column(
+                    children: resultWidgets(check),
+                  ),
+                ),
+              );
+            });
+            await Future<dynamic>.delayed(const Duration(milliseconds: 2000));
+            Navigator.pop(context);
+            Navigator.pop(context);
+            Navigator.pushReplacement(context,
+                MaterialPageRoute(builder: (context)=> FullDeviceDetail(userResponse: widget.userResponse, userDevice: widget.userDevice)));
+            return Future.value(false);
+          },
+        ),
+      ],
+    ));
+    return listWidgets;
+  }
+
+  List<Widget> initDialog2() {
+    listWidgets.clear();
+    listWidgets.add(Text(
+      "Device's name must be 4 - 20 characters!",
+      style: TextStyle(color: Colors.black,),
+      textAlign: TextAlign.center,
+    ));
+    listWidgets.add(const Divider(
+      height: 5,
+      thickness: 1,
+      indent: 50,
+      endIndent: 50,
+      color: Colors.black12,
+    ));
+    listWidgets.add(Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        InkWell(
+          child:
+          Text(
+            "Ok",
+            style: TextStyle(
+              decorationStyle: TextDecorationStyle.solid,
+              color: Colors.green,
+              fontSize:18,
+            ),
+          ),
+          onTap:() {
+            Navigator.pop(context);
+            setState(() {
+              newName = widget.userDevice.deviceName;
+              nameController = new TextEditingController(text: widget.userDevice.deviceName);
+            });
+          },
+        ),
+      ],
+    ));
+    return listWidgets;
+  }
+
+  List<Widget> getDeleteStateWidgets() {
+    listWidgets.clear();
+    listWidgets.add(
+        Center(
+          child: Column(children: [
+            SizedBox(height: 10),
+            CircularProgressIndicator(
+              color: Colors.green,
+            ),
+            SizedBox(height: 5,),
+            Text("Please Wait....",
+                style: TextStyle(color: Colors.green))
+          ]),
+        )
+    );
+    return listWidgets;
+  }
+
+  List<Widget> resultWidgets(bool x) {
+    listWidgets.clear();
+
+    x ? listWidgets.add(
+        Center(
+          child: Column(children: [
+            SizedBox(height: 10),
+            Icon(
+              Icons.check,
+              color: Colors.green,
+              size: 40.0,
+            ),
+            SizedBox(height: 5,),
+            Text("Successed!",
+                style: TextStyle(color: Colors.green))
+          ]),
+        )
+    ) :
+    listWidgets.add(
+        Center(
+          child: Column(children: [
+            SizedBox(height: 10),
+            Icon(
+              Icons.clear,
+              color: Colors.red,
+              size: 40.0,
+            ),
+            SizedBox(height: 5,),
+            Text("Failed!",
+                style: TextStyle(color: Colors.red))
+          ]),
+        ));
+    return listWidgets;
   }
 }

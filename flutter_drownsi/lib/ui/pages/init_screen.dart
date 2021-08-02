@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_drownsi/authentication/auth_provider.dart';
 import 'package:flutter_drownsi/ui/utils/my_constant.dart';
 import 'package:flutter_drownsi/ui/utils/my_navigator.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -15,7 +16,7 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    final Future<FirebaseApp> _initialization = Firebase.initializeApp();
+    final  Future<FirebaseApp> _initialization = Firebase.initializeApp();
     Timer(Duration(seconds: 3), () => MyNavigator.goToSplash(context));
   }
 

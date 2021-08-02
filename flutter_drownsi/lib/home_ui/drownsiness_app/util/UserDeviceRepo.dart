@@ -55,4 +55,18 @@ class UserDeviceRepo {
     }
   }
 
+  Future<int> getLastestConnected(String token, String userId) async {
+    final String baseUrl = "https://dhdev-drowsiness123.herokuapp.com/api/v1/user-devices/$userId/lastest";
+    final result = await http.get(Uri.parse(baseUrl), headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Authorization': 'Bearer $token',
+    });
+    if (result.statusCode != 200) {
+      return 0;
+    } else {
+      var json_data = jsonDecode(utf8.decode(result.bodyBytes));
+      return json_data['result'];
+    }
+  }
 }

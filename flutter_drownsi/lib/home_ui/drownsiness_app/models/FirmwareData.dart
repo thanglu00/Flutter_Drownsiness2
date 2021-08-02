@@ -4,8 +4,9 @@ class Firmware {
   final String modelUrl;
   final double timeDetection;
   final int createdAt;
+  final bool active;
 
-  Firmware(this.firmwareId, this.description, this.modelUrl, this.timeDetection, this.createdAt);
+  Firmware(this.firmwareId, this.description, this.modelUrl, this.timeDetection, this.createdAt, this.active);
 
   static Firmware fromJson(Map<String, dynamic> json) {
     // var list = json["results"] as List;
@@ -16,6 +17,7 @@ class Firmware {
       json["modelUrl"],
       json["timeDetection"],
       json["createdAt"],
+      json["active"],
     );
   }
 

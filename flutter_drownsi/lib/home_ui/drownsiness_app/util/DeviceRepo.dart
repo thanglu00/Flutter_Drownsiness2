@@ -49,4 +49,22 @@ class DeviceRepo {
     }
   }
 
+  Future<bool> updateDeviceName(String deviceID, String token, String newName) async {
+    final String baseUrl = "https://dhdev-drowsiness123.herokuapp.com/api/v1/devices/$deviceID";
+    final body = {
+      'deviceName': "$newName",
+    };
+    final jsonString = json.encode(body);
+    final result = await http.put(Uri.parse(baseUrl), headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Authorization': 'Bearer $token',
+    }, body: jsonString);
+    if(result.statusCode != 200){
+      throw new Exception('Error!');
+    }else{
+      print(result.toString());
+      return true;
+    }
+  }
 }

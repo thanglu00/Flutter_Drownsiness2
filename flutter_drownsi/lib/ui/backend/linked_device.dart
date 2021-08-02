@@ -29,7 +29,7 @@ class LinkedDeviceWidget extends StatefulWidget {
 class MyLinkedDeviceWidget extends State<LinkedDeviceWidget> {
 
   UserDeviceRepo userDeviceRepo = new UserDeviceRepo();
-  UserDevice userDeviceDTO = new UserDevice("null", "null", 0, 0, new Firmware('null', 'null', 'null', 0, 0));
+  UserDevice userDeviceDTO = new UserDevice("null", "null", 0, 0, new Firmware('null', 'null', 'null', 0, 0, false), 'null', true);
   String checkUpdate = '';
 
   @override
@@ -42,14 +42,14 @@ class MyLinkedDeviceWidget extends State<LinkedDeviceWidget> {
       userDeviceRepo.getLastestFirmware(widget.userResponse1.token).then((fw) {
         if (value != null) {
           setState(() {
-            if (fw!.createdAt > value.firmware.createdAt) {
+            if (fw!.firmwareId != value.firmware.firmwareId) {
               checkUpdate = "Old version";
             }
             userDeviceDTO = value;
           });
         } else {
           setState(() {
-            userDeviceDTO = new UserDevice("null", "nulled", 0, 0, new Firmware('null', 'null', 'null', 0, 0));
+            userDeviceDTO = new UserDevice("null", "nulled", 0, 0, new Firmware('null', 'null', 'null', 0, 0, false), 'null', true);
           });
         }
       });
@@ -229,7 +229,10 @@ class MyLinkedDeviceWidget extends State<LinkedDeviceWidget> {
                       children: [
                         Center(
                             child: TextButton(
-                              onPressed: () {
+                              onPressed: () async {
+                                int currentMilis = await userDeviceRepo.getLastestConnected(widget.userResponse1.token, widget.userResponse1.userId);
+                                int lastestMilis = 0;
+                                //userDeviceRepo.getLastestConnected(widget.userResponse1.token, widget.userResponse1.userId)
                                 String qrData = "connect_" + widget.userResponse1.userId + '_' + widget.userResponse1.username;
                                 showDialog(context: context, builder: (context) {
                                   return Dialog(
@@ -280,6 +283,81 @@ class MyLinkedDeviceWidget extends State<LinkedDeviceWidget> {
                                       ),
                                     ),
                                   );
+                                }).then((value) async {
+                                  lastestMilis = await userDeviceRepo.getLastestConnected(widget.userResponse1.token, widget.userResponse1.userId);
+                                  print(currentMilis);
+                                  print(lastestMilis);
+                                  if(lastestMilis > currentMilis) {
+                                    await userDeviceRepo.getCurrentConnect(widget.userResponse1.userId, widget.userResponse1.token).then((value) {
+                                      if(value!.active) {
+                                        showDialog(context: context, builder: (context) {
+                                          return Dialog(
+                                            shape: RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.circular(30)),
+                                            elevation: 16,
+                                            child: Container(
+                                              height: 300,
+                                              width: 200,
+                                              child: Column(
+                                                children: [
+                                                  SizedBox(height: 40),
+                                                  Image(
+                                                    image: AssetImage(
+                                                        "assets/images/ok.png"),
+                                                    width: 50.0,
+                                                  ),
+                                                  Center(
+                                                    child: RichText(
+                                                      text: TextSpan(
+                                                          children: <TextSpan>[
+                                                            TextSpan(text: 'Linked successfully!!',
+                                                                style: TextStyle(
+                                                                    color: Colors.green)),
+                                                          ]
+                                                      ),
+                                                    ),
+                                                  ),
+
+                                                ],
+                                              ),
+                                            ),
+                                          );
+                                        });
+                                      } else {
+                                        return Dialog(
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(30)),
+                                          elevation: 16,
+                                          child: Container(
+                                            height: 300,
+                                            width: 200,
+                                            child: Column(
+                                              children: [
+                                                SizedBox(height: 40),
+                                                Image(
+                                                  image: AssetImage(
+                                                      "assets/images/deactive.png"),
+                                                  width: 50.0,
+                                                ),
+                                                Center(
+                                                  child: RichText(
+                                                    text: TextSpan(
+                                                        children: <TextSpan>[
+                                                          TextSpan(text: 'Device is banned from server!',
+                                                              style: TextStyle(
+                                                                  color: Colors.red)),
+                                                        ]
+                                                    ),
+                                                  ),
+                                                ),
+
+                                              ],
+                                            ),
+                                          ),
+                                        );
+                                      }
+                                    });
+                                  }
                                 });
                               },
                               child: Row(
