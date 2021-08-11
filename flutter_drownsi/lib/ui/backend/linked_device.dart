@@ -28,6 +28,7 @@ class LinkedDeviceWidget extends StatefulWidget {
 
 class MyLinkedDeviceWidget extends State<LinkedDeviceWidget> {
 
+  List<Widget> listWidgets = [];
   UserDeviceRepo userDeviceRepo = new UserDeviceRepo();
   UserDevice userDeviceDTO = new UserDevice("null", "null", 0, 0, new Firmware('null', 'null', 'null', 0, 0, false), 'null', true);
   String checkUpdate = '';
@@ -39,20 +40,57 @@ class MyLinkedDeviceWidget extends State<LinkedDeviceWidget> {
     userDeviceRepo.getCurrentConnect(
         widget.userResponse1.userId, widget.userResponse1.token)
         .then((value) {
-      userDeviceRepo.getLastestFirmware(widget.userResponse1.token).then((fw) {
-        if (value != null) {
-          setState(() {
-            if (fw!.firmwareId != value.firmware.firmwareId) {
-              checkUpdate = "Old version";
-            }
-            userDeviceDTO = value;
-          });
-        } else {
-          setState(() {
-            userDeviceDTO = new UserDevice("null", "nulled", 0, 0, new Firmware('null', 'null', 'null', 0, 0, false), 'null', true);
-          });
-        }
-      });
+          if(value == null) {
+            setState(() {
+              userDeviceDTO = new UserDevice("null", "nulled", 0, 0, new Firmware('null', 'null', 'null', 0, 0, false), 'null', true);
+            });
+          } else if (value.active == false) {
+            userDeviceRepo.setConnectionUserInDevice(widget.userResponse1.token, widget.userResponse1.userId, value.deviceId);
+            setState(() {
+              userDeviceDTO = new UserDevice("null", "nulled", 0, 0, new Firmware('null', 'null', 'null', 0, 0, false), 'null', true);
+            });
+            showDialog(context: context, builder: (context){
+              return Dialog(
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                elevation: 16,
+                child: Container(
+                  width: 300,
+                  height: 100,
+                  child: Column(
+                    children: getStateWidgets2(),
+                  ),
+                ),
+              );
+            });
+          } else {
+              userDeviceRepo.getLastestFirmware(widget.userResponse1.token).then((fw) {
+                if (value != null) {
+                  setState(() {
+                    if (fw!.firmwareId != value.firmware.firmwareId) {
+                      checkUpdate = "Old version";
+                      showDialog(context: context, builder: (context){
+                        return Dialog(
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                          elevation: 16,
+                          child: Container(
+                            width: 300,
+                            height: 90,
+                            child: Column(
+                              children: getStateWidgets(),
+                            ),
+                          ),
+                        );
+                      });
+                    }
+                    userDeviceDTO = value;
+                  });
+                } else {
+                  setState(() {
+                    userDeviceDTO = new UserDevice("null", "nulled", 0, 0, new Firmware('null', 'null', 'null', 0, 0, false), 'null', true);
+                  });
+                }
+              });
+          };
     });
   }
 
@@ -230,8 +268,6 @@ class MyLinkedDeviceWidget extends State<LinkedDeviceWidget> {
                         Center(
                             child: TextButton(
                               onPressed: () async {
-                                int currentMilis = await userDeviceRepo.getLastestConnected(widget.userResponse1.token, widget.userResponse1.userId);
-                                int lastestMilis = 0;
                                 //userDeviceRepo.getLastestConnected(widget.userResponse1.token, widget.userResponse1.userId)
                                 String qrData = "connect_" + widget.userResponse1.userId + '_' + widget.userResponse1.username;
                                 showDialog(context: context, builder: (context) {
@@ -284,80 +320,64 @@ class MyLinkedDeviceWidget extends State<LinkedDeviceWidget> {
                                     ),
                                   );
                                 }).then((value) async {
-                                  lastestMilis = await userDeviceRepo.getLastestConnected(widget.userResponse1.token, widget.userResponse1.userId);
-                                  print(currentMilis);
-                                  print(lastestMilis);
-                                  if(lastestMilis > currentMilis) {
-                                    await userDeviceRepo.getCurrentConnect(widget.userResponse1.userId, widget.userResponse1.token).then((value) {
-                                      if(value!.active) {
-                                        showDialog(context: context, builder: (context) {
-                                          return Dialog(
-                                            shape: RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.circular(30)),
-                                            elevation: 16,
-                                            child: Container(
-                                              height: 300,
-                                              width: 200,
-                                              child: Column(
-                                                children: [
-                                                  SizedBox(height: 40),
-                                                  Image(
-                                                    image: AssetImage(
-                                                        "assets/images/ok.png"),
-                                                    width: 50.0,
-                                                  ),
-                                                  Center(
-                                                    child: RichText(
-                                                      text: TextSpan(
-                                                          children: <TextSpan>[
-                                                            TextSpan(text: 'Linked successfully!!',
-                                                                style: TextStyle(
-                                                                    color: Colors.green)),
-                                                          ]
-                                                      ),
-                                                    ),
-                                                  ),
-
-                                                ],
-                                              ),
-                                            ),
-                                          );
-                                        });
-                                      } else {
+                                  setState(() {
+                                    userDeviceDTO = new UserDevice("null", "null", 0, 0, new Firmware('null', 'null', 'null', 0, 0, false), 'null', true);
+                                  });
+                                  userDeviceRepo.getCurrentConnect(
+                                      widget.userResponse1.userId, widget.userResponse1.token)
+                                      .then((value) {
+                                    if(value == null) {
+                                      setState(() {
+                                        userDeviceDTO = new UserDevice("null", "nulled", 0, 0, new Firmware('null', 'null', 'null', 0, 0, false), 'null', true);
+                                      });
+                                    } else if (value.active == false) {
+                                      userDeviceRepo.setConnectionUserInDevice(widget.userResponse1.token, widget.userResponse1.userId, value.deviceId);
+                                      setState(() {
+                                        userDeviceDTO = new UserDevice("null", "nulled", 0, 0, new Firmware('null', 'null', 'null', 0, 0, false), 'null', true);
+                                      });
+                                      showDialog(context: context, builder: (context){
                                         return Dialog(
-                                          shape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(30)),
+                                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                                           elevation: 16,
                                           child: Container(
-                                            height: 300,
-                                            width: 200,
+                                            width: 300,
+                                            height: 100,
                                             child: Column(
-                                              children: [
-                                                SizedBox(height: 40),
-                                                Image(
-                                                  image: AssetImage(
-                                                      "assets/images/deactive.png"),
-                                                  width: 50.0,
-                                                ),
-                                                Center(
-                                                  child: RichText(
-                                                    text: TextSpan(
-                                                        children: <TextSpan>[
-                                                          TextSpan(text: 'Device is banned from server!',
-                                                              style: TextStyle(
-                                                                  color: Colors.red)),
-                                                        ]
-                                                    ),
-                                                  ),
-                                                ),
-
-                                              ],
+                                              children: getStateWidgets2(),
                                             ),
                                           ),
                                         );
-                                      }
-                                    });
-                                  }
+                                      });
+                                    } else {
+                                      userDeviceRepo.getLastestFirmware(widget.userResponse1.token).then((fw) {
+                                        if (value != null) {
+                                          setState(() {
+                                            if (fw!.firmwareId != value.firmware.firmwareId) {
+                                              checkUpdate = "Old version";
+                                              showDialog(context: context, builder: (context){
+                                                return Dialog(
+                                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                                                  elevation: 16,
+                                                  child: Container(
+                                                    width: 300,
+                                                    height: 90,
+                                                    child: Column(
+                                                      children: getStateWidgets(),
+                                                    ),
+                                                  ),
+                                                );
+                                              });
+                                            }
+                                            userDeviceDTO = value;
+                                          });
+                                        } else {
+                                          setState(() {
+                                            userDeviceDTO = new UserDevice("null", "nulled", 0, 0, new Firmware('null', 'null', 'null', 0, 0, false), 'null', true);
+                                          });
+                                        }
+                                      });
+                                    };
+                                  });
                                 });
                               },
                               child: Row(
@@ -411,5 +431,101 @@ class MyLinkedDeviceWidget extends State<LinkedDeviceWidget> {
     Navigator.push(context, MaterialPageRoute(builder: (context) =>
         TrackingDetail(dataTracking: drownsinessDataTracking!,
           token: widget.userResponse1.token,)));
+  }
+
+  List<Widget> getStateWidgets() {
+    listWidgets.clear();
+    listWidgets.add(SizedBox(height: 10));
+    listWidgets.add(Text(
+      'New firmware version is detected!',
+      style: TextStyle(color: Colors.black),
+    ),);
+    listWidgets.add(const Divider(
+      height: 5,
+      thickness: 1,
+      indent: 50,
+      endIndent: 50,
+      color: Colors.black12,
+    ));
+    listWidgets.add(SizedBox(height: 10));
+    listWidgets.add(Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        InkWell(
+          child:
+          Text(
+            "Cancel",
+            style: TextStyle(
+              decorationStyle: TextDecorationStyle.solid,
+              color: Colors.red,
+              fontSize:18,
+            ),
+          ),
+          onTap:() => Navigator.pop(context),
+        ),
+        SizedBox(width: 25),
+        InkWell(
+          child:
+          Text(
+            "Next",
+            style: TextStyle(
+              decorationStyle: TextDecorationStyle.solid,
+              color: Colors.green,
+              fontSize:18,
+            ),
+          ),
+          onTap: () {
+            Navigator.pop(context);
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => FullDeviceDetail(
+                      userResponse: widget.userResponse1, userDevice: userDeviceDTO,
+                    )));
+          },
+        ),
+      ],
+    ));
+
+    return listWidgets;
+  }
+
+  List<Widget> getStateWidgets2() {
+    listWidgets.clear();
+    listWidgets.add(SizedBox(height: 10));
+    listWidgets.add(Center(child: Text(
+      'CONNECT FAILED!\n Your device is banned from server!',
+      style: TextStyle(color: Colors.red),
+      textAlign: TextAlign.center,
+    )));
+    listWidgets.add(const Divider(
+      height: 5,
+      thickness: 1,
+      indent: 50,
+      endIndent: 50,
+      color: Colors.black12,
+    ));
+    listWidgets.add(SizedBox(height: 10));
+    listWidgets.add(Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        InkWell(
+          child:
+          Text(
+            "OK",
+            style: TextStyle(
+              decorationStyle: TextDecorationStyle.solid,
+              color: Colors.green,
+              fontSize:18,
+            ),
+          ),
+          onTap:() => Navigator.pop(context),
+        ),
+      ],
+    ));
+
+    return listWidgets;
   }
 }

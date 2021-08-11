@@ -392,7 +392,7 @@ class _QRScreenState extends State<QRScreen>
                           color: Colors.red,
                         ),
                         Text(
-                          'Turn on detection',
+                          'Turn off detection',
                           style: TextStyle(
                             fontSize: 9,
                           ),

@@ -69,4 +69,22 @@ class UserDeviceRepo {
       return json_data['result'];
     }
   }
+
+  Future<bool> setConnectionUserInDevice(String token, String userId, String deviceId) async {
+    final String baseUrl = "https://dhdev-drowsiness123.herokuapp.com/api/v1/user-devices/user/$userId/device/$deviceId/connect";
+    final body = {
+      'connected': false,
+    };
+    final jsonString = json.encode(body);
+    final result = await http.put(Uri.parse(baseUrl), headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Authorization': 'Bearer $token',
+    }, body: jsonString);
+    if (result.statusCode != 200) {
+      return Future.value(false);
+    } else {
+      return Future.value(true);
+    }
+  }
 }
